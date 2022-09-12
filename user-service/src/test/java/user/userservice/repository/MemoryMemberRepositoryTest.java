@@ -4,6 +4,8 @@ import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import user.userservice.domain.Member;
 
+import java.util.Optional;
+
 import static org.assertj.core.api.Assertions.*;
 
 class MemoryMemberRepositoryTest {
@@ -31,7 +33,21 @@ class MemoryMemberRepositoryTest {
         //org.assertj.core.api 에서 제공하는 클래스 - 조금 더 직관적으로 쓸 수 있음
         //Assersions에 Alt+Enter >> static으로 지정 후 바로 사용가능
         assertThat(member).isEqualTo(result);
+    }
 
+    @Test
+    public void findByName(){
+        Member member1 = new Member();
+        member1.setName("spring1");
+        repository.save(member1);
+
+        Member member2 = new Member();
+        member2.setName("spring2");
+        repository.save(member2);
+
+        Member result = repository.findByName("spring1").get();
+        assertThat(member1).isEqualTo(result);
+//        assertThat(member2).isEqualTo(result);
 
     }
 }
