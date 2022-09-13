@@ -1,9 +1,11 @@
 package user.userservice.repository;
 
 import org.assertj.core.api.Assertions;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import user.userservice.domain.Member;
 
+import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.*;
@@ -11,6 +13,11 @@ import static org.assertj.core.api.Assertions.*;
 class MemoryMemberRepositoryTest {
 
     MemoryMemberRepository repository = new MemoryMemberRepository();
+
+    @AfterEach
+    public void afterEach(){
+        repository.clearStore();
+    }
 
     @Test
     public void save(){
@@ -49,5 +56,27 @@ class MemoryMemberRepositoryTest {
         assertThat(member1).isEqualTo(result);
 //        assertThat(member2).isEqualTo(result);
 
+        System.out.println(member1);
+        System.out.println(member2);
+
     }
+
+    @Test
+    public void findAll(){
+        Member member1 = new Member();
+        Member member2 = new Member();
+
+        member1.setName("spring1");
+        member2.setName("spring2");
+
+        repository.save(member1);
+        repository.save(member2);
+
+        List<Member> result = repository.findAll();
+
+        System.out.println(result);
+
+        assertThat(result.size()).isEqualTo(2);
+    }
+
 }
