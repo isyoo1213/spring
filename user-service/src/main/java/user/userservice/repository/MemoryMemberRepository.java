@@ -5,7 +5,7 @@ import user.userservice.domain.Member;
 
 import java.util.*;
 
-@Repository
+//@Repository
 public class MemoryMemberRepository implements MemberRepository {
     private static Map<Long, Member> store = new HashMap<>();
     //동시성 문제로 공유되는 변수일 때는 quenqurer 뭐시기 써야하나 예시이므로 단순하게 hashMap
