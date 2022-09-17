@@ -4,7 +4,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import user.userservice.repository.MemberRepository;
-import user.userservice.repository.MemoryMemberRepository;
 import user.userservice.service.MemberService;
 
 @Configuration
