@@ -4,28 +4,39 @@ import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
 import user.userservice.domain.Member;
+import user.userservice.repository.MemberRepository;
 import user.userservice.repository.MemoryMemberRepository;
+
+import javax.transaction.Transactional;
 
 import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
 //Test 클래스 생성 시 default로 junit의 Assersions를 가져옴
 
+@SpringBootTest
+@Transactional
 class MemberServiceTest {
 
+    @Autowired
     MemberService memberService;
-    MemoryMemberRepository memberRepository;
 
-    @BeforeEach
-    public void beforeEach(){
-        memberRepository = new MemoryMemberRepository();
-        memberService = new MemberService(memberRepository); //DI
-    }
+    @Autowired
+    MemberRepository memberRepository;
+    //Spring이 SpringConfig에서 설정한 구현체를 찾아 필드주입
 
-    @AfterEach
-    public void afterEach(){
-        memberRepository.clearStore();
-    }
+//    @BeforeEach
+//    public void beforeEach(){
+//        memberRepository = new MemoryMemberRepository();
+//        memberService = new MemberService(memberRepository); //DI
+//    }
+//
+//    @AfterEach
+//    public void afterEach(){
+//        memberRepository.clearStore();
+//    }
 
     @Test
     void 회원가입() {
