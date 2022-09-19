@@ -16,6 +16,7 @@ public class TimeTraceAop {
 
         try {
              return joinPoint.proceed();
+             //Proxy에서 실제 Bean을 호출해 메서드를 진행
         } finally {
             long finish = System.currentTimeMillis();
             long timeMs = finish - start;

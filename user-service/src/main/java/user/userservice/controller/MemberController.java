@@ -18,6 +18,14 @@ public class MemberController {
     @Autowired
     public MemberController(MemberService memberService) {
         this.memberService = memberService;
+
+        System.out.println("memberService = " + memberService.getClass());
+        //Aop적용 후 Controller에서 호출되는 memberService 인스턴스 정보 확인하기 위한 statement
+        //Spring Container 컨테이너 띄울 때 확인 가능
+        //memberService = class user.userservice.service.MemberService$$EnhancerBySpringCGLIB$$419f2078
+        //SpringCGLIB - 해당 bean을 복제해서 Spring이 사용할 수 있도록 코드를 조작하는 Library
+        //Aop 적용이 필요할 때 Spring은 이 proxy로 복제된 인스턴스를 '주입'해 처리한 후 proceed() 진행 - * DI가 적극 활요되는 부분 *
+
     } //MemberController가 생성될 때 컨테이너에 저장하고 있는 memberService 빈 객체를 주입해 연결해줌
       //DI
 
