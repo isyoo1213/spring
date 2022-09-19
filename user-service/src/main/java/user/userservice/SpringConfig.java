@@ -3,13 +3,19 @@ package user.userservice;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import user.userservice.repository.MemberRepository;
 import user.userservice.service.MemberService;
+import user.userservice.aop.TimeTraceAop;
+import user.userservice.repository.MemberRepository;
 
 @Configuration
 public class SpringConfig {
 
     private final MemberRepository memberRepository;
+
+    @Bean
+    public TimeTraceAop timeTraceAop(){
+        return new TimeTraceAop();
+    }
 
     @Autowired //생성자 1개인 경우 생략 가능 SpringConfig 또한 bean등록되므로 DI 가능
     public SpringConfig(MemberRepository memberRepository) {

@@ -9,6 +9,7 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class JasyptConfig {
 
+    // 암호화 관련
     public static final String ENV_JASYPT_KEY = "encryption_key";
 
     @Bean(name="jasyptStringEncryptor")

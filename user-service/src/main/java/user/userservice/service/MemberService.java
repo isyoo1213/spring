@@ -1,10 +1,7 @@
 package user.userservice.service;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 import user.userservice.domain.Member;
 import user.userservice.repository.MemberRepository;
-import user.userservice.repository.MemoryMemberRepository;
 
 import java.util.List;
 import java.util.Optional;
@@ -20,12 +17,24 @@ public class MemberService {
     } //for Dependency Injection
     //MemberService 객체 생성 시, 스프링 빈에 등록된 repository 객체를 주입해줌 >> 이것도 DI
 
-    public Long join(Member member){
-        //같은 이름 중복 처리
-        validateDuplicateMember(member);
 
-        memberRepository.save(member);
-        return member.getId();
+    public Long join(Member member){
+
+        long start = System.currentTimeMillis();
+
+        try{
+            //같은 이름 중복 처리
+            validateDuplicateMember(member);
+
+            memberRepository.save(member);
+            return member.getId();
+
+        } finally {
+            long finish = System.currentTimeMillis();
+            long timeMs = finish - start;
+            System.out.println("Join's timeMs = " + timeMs + "ms");
+        }
+
     }
 
     private void validateDuplicateMember(Member member) {

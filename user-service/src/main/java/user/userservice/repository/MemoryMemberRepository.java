@@ -1,6 +1,5 @@
 package user.userservice.repository;
 
-import org.springframework.stereotype.Repository;
 import user.userservice.domain.Member;
 
 import java.util.*;

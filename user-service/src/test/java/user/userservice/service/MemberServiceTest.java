@@ -1,14 +1,10 @@
 package user.userservice.service;
 
-import org.assertj.core.api.Assertions;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import user.userservice.domain.Member;
 import user.userservice.repository.MemberRepository;
-import user.userservice.repository.MemoryMemberRepository;
 
 import javax.transaction.Transactional;
 
