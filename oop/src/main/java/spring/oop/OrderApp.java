@@ -11,6 +11,8 @@ import spring.oop.order.OrderServiceImpl;
 public class OrderApp {
 
     public static void main(String[] args) {
+
+//      우선 오류코드 보류
         MemberService memberService = new MemberServiceImpl();
         OrderService orderService = new OrderServiceImpl();
 
