@@ -3,18 +3,21 @@ package spring.oop;
 import spring.oop.member.Grade;
 import spring.oop.member.Member;
 import spring.oop.member.MemberService;
-import spring.oop.member.MemberServiceImpl;
 import spring.oop.order.Order;
 import spring.oop.order.OrderService;
-import spring.oop.order.OrderServiceImpl;
 
 public class OrderApp {
 
     public static void main(String[] args) {
 
-//      우선 오류코드 보류
-        MemberService memberService = new MemberServiceImpl();
-        OrderService orderService = new OrderServiceImpl();
+        AppConfig appConfig = new AppConfig();
+
+        MemberService memberService = appConfig.memberService();
+        OrderService orderService = appConfig.orderService(); // 우선 FixDiscountPolicy 적용
+
+//        기존의 DIP 미준수
+//        MemberService memberService = new MemberServiceImpl(null);
+//        OrderService orderService = new OrderServiceImpl(null, null);
 
         Long memberId = 1L;
         Member member = new Member(memberId, "memberA", Grade.VIP);
