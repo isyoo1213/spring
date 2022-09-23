@@ -24,7 +24,7 @@ public class OrderApp {
 
         memberService.join(member);
 
-        Order order = orderService.createOrder(member.getId(), "itemA", 10000);
+        Order order = orderService.createOrder(member.getId(), "itemA", 20000);
         System.out.println("order = " + order);
         //출력 시 Overriding된 toString()의 보기 편한 포맷으로 출력
         System.out.println("order.calcuatePrice = " + order.calculatePrice());
