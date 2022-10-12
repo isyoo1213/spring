@@ -18,18 +18,21 @@ public class AppConfig {
 
     @Bean
     public MemberRepository memberRepository() {
+        System.out.println("call AppConfig.memberRepository");
         return new MemoryMemberRepository();
     }
 
     //설계에 대한 그림을 담은 AppConfig에서 구현체만 변경 가능
     @Bean
     public DiscountPolicy discountPolicy() {
+        System.out.println("call AppConfig.discountPolicy");
 //        return new FixDiscountPolicy();
         return new RateDiscountPolicy();
     }
 
     @Bean
     public MemberService memberService(){
+        System.out.println("call AppConfig.memberService");
         return new MemberServiceImpl(memberRepository());
     }
 
