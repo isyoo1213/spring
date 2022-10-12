@@ -37,8 +37,13 @@ class ConfigurationSingletonTest {
     void configurationDeep(){
         ApplicationContext ac = new AnnotationConfigApplicationContext(AppConfig.class);
         AppConfig bean = ac.getBean(AppConfig.class);
+        //AppConfig.class로 조회했음에도 CGLIB가 AppConfig 클래스를 상속받고 있으므로 조회 가능
+        // * 부모타입을 조회하면 자식타입도 끌려나옴
+        // + AppConfig 자체는 인스턴스를 생성하지 않고, CGLIB의 인스턴스가 이름도 가로챔
 
         System.out.println("bean = " + bean.getClass());
+        //실제 출력 내용 - bean = class spring.oop.AppConfig$$EnhancerBySpringCGLIB$$62536d5f
+        //AppConfig를 상속받은 CGLIB라는 바이트코드 조작 라이브러리를 통해 스프링컨테이너가 생성한 클래스의 인스턴스
     }
 
 }
