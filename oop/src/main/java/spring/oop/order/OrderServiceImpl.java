@@ -1,5 +1,7 @@
 package spring.oop.order;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import spring.oop.discount.DiscountPolicy;
 import spring.oop.discount.FixDiscountPolicy;
 import spring.oop.discount.RateDiscountPolicy;
@@ -7,6 +9,7 @@ import spring.oop.member.Member;
 import spring.oop.member.MemberRepository;
 import spring.oop.member.MemoryMemberRepository;
 
+@Component
 public class OrderServiceImpl implements OrderService {
 
     private final MemberRepository memberRepository;
@@ -21,6 +24,7 @@ public class OrderServiceImpl implements OrderService {
       */
     private final DiscountPolicy discountPolicy;
 
+    @Autowired //ApplicationContext를 통해 인자로 받는 의존관계들의 인스턴스를 찾아 주입해줌
     public OrderServiceImpl(MemberRepository memberRepository, DiscountPolicy discountPolicy) {
         this.memberRepository = memberRepository;
         this.discountPolicy = discountPolicy;
@@ -38,5 +42,5 @@ public class OrderServiceImpl implements OrderService {
     public MemberRepository getMemberRepository() {
         return memberRepository;
     }
-    
+
 }

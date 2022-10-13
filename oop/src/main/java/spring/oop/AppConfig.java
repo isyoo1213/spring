@@ -12,10 +12,13 @@ import spring.oop.member.MemoryMemberRepository;
 import spring.oop.order.OrderService;
 import spring.oop.order.OrderServiceImpl;
 
+//Configuration 어노테이션을 제거할 경우, 순수 JAVA를 통해 싱글톤이 아닌 방식으로 모든 인스턴스 생성해버림
 @Configuration
 public class AppConfig {
 //역할과 구현 정보고 담기도록 리팩토링
 
+    //@Bean을 통한 경우 - repository를 사용하겠다는 의존관계가 명확하게 코드화
+    //@Component 방식 - 단지 Bean등록만을 표현하므로 의존관계 설정을 위한 작업 필요 --> @Autowired 사용
     @Bean
     public MemberRepository memberRepository() {
         System.out.println("call AppConfig.memberRepository");
