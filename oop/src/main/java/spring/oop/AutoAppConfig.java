@@ -13,7 +13,9 @@ import spring.oop.member.MemoryMemberRepository;
 @ComponentScan(
         //탐색할 패키지 위치를 정하지 않을 경우 - @ConponentScan 어노테이션이 붙은 클래스가 위치한 패키지와 하위를 모두 탐색
         //즉, spring.oop 하위의 모든 패키지를 탐색 --> ** 설정정보 클래스를 최상위 패키지에 위치하고 따로 설정하지 않는 방식이 관례
-        basePackages = "spring.oop.member", //원하는 패키지에서 컴포넌트스캔 가능 -> AutoAppConfig 자신을 포함한 위치 내의 component만 스캔
+//        basePackages = "spring.oop.member",
+        //원하는 패키지에서 컴포넌트스캔 가능 -> ** 'AutoAppConfig 자신을 포함한' 위치 내의 component만 스캔
+        //즉, @Configuration이 붙어 설정 정보를 구성해야하는 '자기 자신'을 제외한 Configuration을 제외
         excludeFilters = @ComponentScan.Filter(type = FilterType.ANNOTATION, classes = Configuration.class)
 )
 public class AutoAppConfig {

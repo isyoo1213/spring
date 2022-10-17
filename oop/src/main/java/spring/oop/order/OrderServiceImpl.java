@@ -12,6 +12,7 @@ import spring.oop.member.MemoryMemberRepository;
 @Component
 public class OrderServiceImpl implements OrderService {
 
+    //final 선언과 생성자 주입을 통해 무조건적으로 초기화 되도록 설정 --> 필수 & 불변적인 생성자 주입의 성격
     private final MemberRepository memberRepository;
 
     /**
@@ -24,8 +25,12 @@ public class OrderServiceImpl implements OrderService {
       */
     private final DiscountPolicy discountPolicy;
 
+    //생성자 1개일 경우에는 @Autowired 생략 가능
     @Autowired //ApplicationContext를 통해 인자로 받는 의존관계들의 인스턴스를 찾아 주입해줌
     public OrderServiceImpl(MemberRepository memberRepository, DiscountPolicy discountPolicy) {
+        System.out.println("memberRepository = " + memberRepository);
+        System.out.println("discountPolicy = " + discountPolicy);
+        //생성자 주입 시 인자로 넘어오는 인스턴스의 유무 파악
         this.memberRepository = memberRepository;
         this.discountPolicy = discountPolicy;
     }
