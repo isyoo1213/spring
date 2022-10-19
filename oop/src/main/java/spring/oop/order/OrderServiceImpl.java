@@ -13,7 +13,8 @@ import spring.oop.member.MemoryMemberRepository;
 public class OrderServiceImpl implements OrderService {
 
     //final 선언과 생성자 주입을 통해 무조건적으로 초기화 되도록 설정 --> 필수 & 불변적인 생성자 주입의 성격
-    @Autowired private MemberRepository memberRepository;
+//    @Autowired
+    private MemberRepository memberRepository;
 
     /**
      기존의 의존 - DiscountPolicy 인터페이스(추상화)와 new FixDiscountPolicy() 구현체(구체화)에 모두 의존
@@ -23,7 +24,18 @@ public class OrderServiceImpl implements OrderService {
     /**
      새로운 의존 - DiscountPolicy 인터페이스에만 의존 but 구현체 생성 해결 필요
       */
-    @Autowired private DiscountPolicy discountPolicy;
+//    @Autowired
+    private DiscountPolicy discountPolicy;
+
+/* 일반 메서드 주입
+    //일반 메서드 주입 - 한 번에 여러 의존관계 필드를 주입받을 수 있다
+    //but 생성자 주입, 수정자 주입으로 대체 가능하므로 사용하지 않는다
+    @Autowired
+    public void init(MemberRepository memberRepository, DiscountPolicy discountPolicy){
+        this.memberRepository = memberRepository;
+        this.discountPolicy = discountPolicy;
+    }
+*/
 
 /* 수정자 주입
     //수정자 주입 - 수정자 메서드를 통한 의존관계 주입 - 필드에 final 생략해야 함
@@ -55,6 +67,7 @@ public class OrderServiceImpl implements OrderService {
         this.discountPolicy = discountPolicy;
     }
 */
+    
     @Override
     public Order createOrder(Long memberId, String itemName, int itemPrice) {
 
