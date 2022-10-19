@@ -41,7 +41,9 @@ public class AppConfig {
 
     @Bean
     public OrderService orderService(){
-        return new OrderServiceImpl(memberRepository(), discountPolicy());
+//필드주입 Test를 위해 임시 주석처리 후 null 리턴
+//        return new OrderServiceImpl(memberRepository(), discountPolicy());
+        return null;
     }
 
 }
