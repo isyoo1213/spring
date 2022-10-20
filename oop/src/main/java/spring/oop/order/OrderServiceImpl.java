@@ -14,7 +14,7 @@ public class OrderServiceImpl implements OrderService {
 
     //final 선언과 생성자 주입을 통해 무조건적으로 초기화 되도록 설정 --> 필수 & 불변적인 생성자 주입의 성격
 //    @Autowired
-    private MemberRepository memberRepository;
+    private final MemberRepository memberRepository;
 
     /**
      기존의 의존 - DiscountPolicy 인터페이스(추상화)와 new FixDiscountPolicy() 구현체(구체화)에 모두 의존
@@ -25,7 +25,7 @@ public class OrderServiceImpl implements OrderService {
      새로운 의존 - DiscountPolicy 인터페이스에만 의존 but 구현체 생성 해결 필요
       */
 //    @Autowired
-    private DiscountPolicy discountPolicy;
+    private final DiscountPolicy discountPolicy;
 
 /* 일반 메서드 주입
     //일반 메서드 주입 - 한 번에 여러 의존관계 필드를 주입받을 수 있다
@@ -56,7 +56,7 @@ public class OrderServiceImpl implements OrderService {
     }
 */
 
-/* 생성자 주입
+ //생성자 주입
     //생성자 1개일 경우에는 @Autowired 생략 가능
     @Autowired //ApplicationContext를 통해 인자로 받는 의존관계들의 인스턴스를 찾아 주입해줌
     public OrderServiceImpl(MemberRepository memberRepository, DiscountPolicy discountPolicy) {
@@ -66,8 +66,7 @@ public class OrderServiceImpl implements OrderService {
         this.memberRepository = memberRepository;
         this.discountPolicy = discountPolicy;
     }
-*/
-    
+
     @Override
     public Order createOrder(Long memberId, String itemName, int itemPrice) {
 

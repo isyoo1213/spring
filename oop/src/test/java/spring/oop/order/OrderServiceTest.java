@@ -34,7 +34,7 @@ public class OrderServiceTest {
 
     @Test
     void fieldInjectionTest(){
-        OrderServiceImpl orderService = new OrderServiceImpl();
+//        OrderServiceImpl orderService = new OrderServiceImpl();
         //필드 주입의 경우, orderService 인스턴스에 주입된 memoryRepository 같은 의존관계를 직접적으로 설정 불가
         //--> this.memberRepository 가 null이므로 setter를 열어서 주입하면 결국 수정자 주입이 되어버림
         //순수한 orderServiceImpl 인스턴스를 생성해서 테스트 돌리는 것이 불가능

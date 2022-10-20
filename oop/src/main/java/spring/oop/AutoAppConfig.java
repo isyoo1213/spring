@@ -20,6 +20,7 @@ import spring.oop.member.MemoryMemberRepository;
 )
 public class AutoAppConfig {
 
+/* //수동 bean등록 vs 자동 bean 등록
     @Bean(name = "memoryMemberRepository")
     MemberRepository memberRepository(){
         return new MemoryMemberRepository();
@@ -37,5 +38,6 @@ public class AutoAppConfig {
         // + SpringBoot에서 Overriding False를 True로 변경하려면 --> application.properties에서 설정
         // ex) spring.main.allow-bean-definition-overriding=true
     }
+*/
 
 }
