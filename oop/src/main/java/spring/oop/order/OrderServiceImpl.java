@@ -1,5 +1,6 @@
 package spring.oop.order;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import spring.oop.discount.DiscountPolicy;
@@ -10,6 +11,7 @@ import spring.oop.member.MemberRepository;
 import spring.oop.member.MemoryMemberRepository;
 
 @Component
+@RequiredArgsConstructor// ctrl + F12 를 통해 생성자 확인 가능 + final이 붙은 필드를 모아 생성자를 자동으로 생성
 public class OrderServiceImpl implements OrderService {
 
     //final 선언과 생성자 주입을 통해 무조건적으로 초기화 되도록 설정 --> 필수 & 불변적인 생성자 주입의 성격
@@ -59,6 +61,7 @@ public class OrderServiceImpl implements OrderService {
     }
 */
 
+/*
 //생성자 주입
     //생성자 1개일 경우에는 @Autowired 생략 가능
     @Autowired //ApplicationContext를 통해 인자로 받는 의존관계들의 인스턴스를 찾아 주입해줌
@@ -69,6 +72,7 @@ public class OrderServiceImpl implements OrderService {
         this.memberRepository = memberRepository;
         this.discountPolicy = discountPolicy;
     }
+*/
 
     @Override
     public Order createOrder(Long memberId, String itemName, int itemPrice) {
