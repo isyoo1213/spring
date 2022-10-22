@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
+import spring.oop.annotation.MainDiscountPolicy;
 import spring.oop.discount.DiscountPolicy;
 import spring.oop.discount.FixDiscountPolicy;
 import spring.oop.discount.RateDiscountPolicy;
@@ -67,11 +68,13 @@ public class OrderServiceImpl implements OrderService {
     //1. 필드 이름 or parameter 이름을 통해 구체 bean 등록 가능
     //2. @Qualifier를 통해 parameter 앞에 특정해서 등록 가능
     //3. @Primary를 통해 주입할 인스턴스의 클래스에 등록
+    //4. @Qualifier의 컴파일 검토 단점을 개선하기 위한 커스텀 어노테이션
     //생성자 1개일 경우에는 @Autowired 생략 가능
     @Autowired //ApplicationContext를 통해 인자로 받는 의존관계들의 인스턴스를 찾아 주입해줌
-    public OrderServiceImpl(MemberRepository memberRepository, DiscountPolicy discountPolicy) {
+    public OrderServiceImpl(MemberRepository memberRepository, @MainDiscountPolicy DiscountPolicy discountPolicy) {
     //1. parameter를 rateDiscountPolicy로 특정 + this.rateDiscountPolicy를 통해 bean 주입가능
     //2. Qualifier 사용하기 - @Qualifier("mainDiscountPolicy")
+    //4. Custom Annotation 사용하기 - @MainDiscountPolicy
         System.out.println("생성자 memberRepository = " + memberRepository);
         System.out.println("생성자 discountPolicy = " + discountPolicy);
         //생성자 주입 시 인자로 넘어오는 인스턴스의 유무 파악
