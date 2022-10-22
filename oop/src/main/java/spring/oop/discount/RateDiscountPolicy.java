@@ -1,10 +1,14 @@
 package spring.oop.discount;
 
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Component;
 import spring.oop.member.Grade;
 import spring.oop.member.Member;
 
 @Component
+@Primary
+//@Qualifier("mainDiscountPolicy")
 public class RateDiscountPolicy implements DiscountPolicy {
 
     private int discountRate = 10;

@@ -2,6 +2,7 @@ package spring.oop.order;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 import spring.oop.discount.DiscountPolicy;
 import spring.oop.discount.FixDiscountPolicy;
@@ -11,7 +12,7 @@ import spring.oop.member.MemberRepository;
 import spring.oop.member.MemoryMemberRepository;
 
 @Component
-@RequiredArgsConstructor// ctrl + F12 를 통해 생성자 확인 가능 + final이 붙은 필드를 모아 생성자를 자동으로 생성
+//@RequiredArgsConstructor// ctrl + F12 를 통해 생성자 확인 가능 + final이 붙은 필드를 모아 생성자를 자동으로 생성
 public class OrderServiceImpl implements OrderService {
 
     //final 선언과 생성자 주입을 통해 무조건적으로 초기화 되도록 설정 --> 필수 & 불변적인 생성자 주입의 성격
@@ -61,18 +62,22 @@ public class OrderServiceImpl implements OrderService {
     }
 */
 
-/*
 //생성자 주입
+    //의존관계 주입 시, 동일한 type의 bean이 2개 이상 존재
+    //1. 필드 이름 or parameter 이름을 통해 구체 bean 등록 가능
+    //2. @Qualifier를 통해 parameter 앞에 특정해서 등록 가능
+    //3. @Primary를 통해 주입할 인스턴스의 클래스에 등록
     //생성자 1개일 경우에는 @Autowired 생략 가능
     @Autowired //ApplicationContext를 통해 인자로 받는 의존관계들의 인스턴스를 찾아 주입해줌
     public OrderServiceImpl(MemberRepository memberRepository, DiscountPolicy discountPolicy) {
+    //1. parameter를 rateDiscountPolicy로 특정 + this.rateDiscountPolicy를 통해 bean 주입가능
+    //2. Qualifier 사용하기 - @Qualifier("mainDiscountPolicy")
         System.out.println("생성자 memberRepository = " + memberRepository);
         System.out.println("생성자 discountPolicy = " + discountPolicy);
         //생성자 주입 시 인자로 넘어오는 인스턴스의 유무 파악
         this.memberRepository = memberRepository;
         this.discountPolicy = discountPolicy;
     }
-*/
 
     @Override
     public Order createOrder(Long memberId, String itemName, int itemPrice) {
