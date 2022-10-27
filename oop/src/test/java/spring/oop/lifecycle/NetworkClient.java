@@ -3,6 +3,10 @@ package spring.oop.lifecycle;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.InitializingBean;
 
+import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
+//javax. - JAVA 진영에서 공식적으로 지원하는 것들로 Spring이 아니더라도 사용 가능
+
 class NetworkClient {
     //1. 초기화(InitializingBean), 소멸(DisposableBean) 인터페이스 적용
     // - 스프링 전용 인터페이스에 의존 + 메서드 이름 변경 불가 + 코드레벨에 적용하므로 외부 라이브러리에 적용 불가
@@ -51,6 +55,7 @@ class NetworkClient {
     }
 */
 
+    @PostConstruct
     public void init(){
         //의존관계 주입이 끝난 후의 세팅을 의미
         System.out.println("NetworkClient.init");
@@ -58,6 +63,7 @@ class NetworkClient {
         call("초기화 연결 메시지");
     }
 
+    @PreDestroy
     public void close(){
         System.out.println("NetworkClient.close");
         disconnection();

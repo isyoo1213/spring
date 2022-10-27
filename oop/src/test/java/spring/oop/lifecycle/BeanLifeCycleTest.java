@@ -20,10 +20,14 @@ class BeanLifeCycleTest {
 
     @Configuration
     static class LifeCycleConfig{
-        @Bean(initMethod = "init", destroyMethod = "close")
+    /*  //initMethod, destroyMethod
+        @Bean
+        (initMethod = "init", destroyMethod = "close")
         //- 직접 수동으로 bean등록하는 경우, @Bean의 destroyMethod에는 default로 "(inferred)"가 등록되어 있음
         // -> close, shutdown이라는 이름의 method를 자동으로 호출 ( destroyMethod="" )으로 등록시 추론 기능 off
         // + JAVA 1.7부터 AutoClosable 인터페이스를 상속받은 close() 메서드를 사용할 수도 있음
+    */
+        @Bean
         public NetworkClient networkClient(){
             NetworkClient networkClient = new NetworkClient();
             //초기화가 먼저 일어나고 수정자 주입(setter)으로 의존관계를 주입하는 상태 - '객체 생성'과 '의존관계 주입'의 분리
