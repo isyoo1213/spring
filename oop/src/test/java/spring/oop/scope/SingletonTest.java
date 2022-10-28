@@ -21,6 +21,8 @@ class SingletonTest {
 
         SingletonBean singletonBean1 = ac.getBean(SingletonBean.class);
         SingletonBean singletonBean2 = ac.getBean(SingletonBean.class);
+        //** Singleton Bean은 스프링 컨테이너 생성 시점에 초기화 메서드 실행
+        //vs prototype Bean은 조회 등 클라이언트의 요청 시점에 초기화 메서드 실행
         System.out.println("singletonBean1 = " + singletonBean1);
         System.out.println("singletonBean2 = " + singletonBean2);
 
