@@ -3,6 +3,7 @@ package spring.oop.scope;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.context.annotation.Scope;
@@ -27,32 +28,60 @@ class SingletonWithPrototypeTest1 {
 
     @Test
     void singletonClientUsePrototype(){
+        System.out.println("ApplicationContext 생성 시작");
         ConfigurableApplicationContext ac =
                 new AnnotationConfigApplicationContext(ClientBean.class, PrototypeBean.class);
+        //prototypeBean 또한 bean으로 등록해서 컨테이너가 사용하고, clientBean이 의존관계로 주입받을 수 있도록 설정
+        System.out.println("ApplicationContext 생성 완료");
 
+        System.out.println("ClientBean1 조회");
         ClientBean clientBean1 = ac.getBean(ClientBean.class);
+
+        System.out.println("ClientBean1의 instance가 logic() 호출");
         int count1 = clientBean1.logic();
+
         assertThat(count1).isEqualTo(1);
 
+        System.out.println("ClientBean2 조회");
         ClientBean clientBean2 = ac.getBean(ClientBean.class);
+
+        System.out.println("ClientBea21의 instance가 logic() 호출");
         int count2 = clientBean2.logic();
         //이미 client1의 생성 시점에 의존관계 주입 요청으로 prototypeBean이 생성되어 필드에 주입
         //singleton인 clientBean2 또한 client1의 인스턴스와 같은 주소를 가리키고, 인스턴스에 이미 주입된 기존의 prototypeBean을 사용
-        assertThat(count2).isEqualTo(2);
+        assertThat(count2).isEqualTo(1);
     }
 
     @Scope("singleton")
     static class ClientBean{
-        private final PrototypeBean prototypeBean;
+//        private final PrototypeBean prototypeBean;
         //스프링 컨테이너를 통한 ClientBean의 싱글톤 인스턴스 생성 시점에 '의존성 주입을 위한 요청' --> 이 시점에서 이미 주입 됨
         //Test에서 logic()호출 시, 이미 생성된 prototypeBean을 사용함
 
+        //요구사항 - clientBean이 logic()을 호출할 때마다, 새로운 prototypeBean의 인스턴스를 사용하도록 하고 싶음
+        //방법 1. ApplicationContext가 prototypeBean을 '조회'하도록 설계해 새로운 인스턴스를 생성해 사용하도록 함
+        // -> ClientBean에 ApplicationContext를 의존관계로 주입해 자유롭게 사용하도록 설정
+        //but, ClientBean의 생성자를 살려두면, 생성 시점에 prototypeBean의 인스턴스를 의존관계를 주입받은 인스턴스가 필드로 저장됨
+        // -> but, logic()메서드에서 ApplicationContext가 조회해 새롭게 생성한 protypeBean을 사용함
         @Autowired
-        public ClientBean(PrototypeBean prototypeBean){
-            this.prototypeBean = prototypeBean;
-        }
+        ApplicationContext applicationContext;
+
+//        @Autowired
+//        public ClientBean(PrototypeBean prototypeBean){
+//            System.out.println("ClientBean 생성자 호출");
+//
+//            System.out.println("ClientBean의 의존관계를 주입할 prototypeBean = " + prototypeBean);
+//            //이미 ApplicationContext에서 bean등록한 prototypeBean이 호출되어 넘어옴 -> 새롭게 생성한 인스턴스 X
+//            this.prototypeBean = prototypeBean;
+//
+//            System.out.println("ClientBean 생성자의 prototypeBean 의존관계 주입 완료");
+//        }
 
         public int logic(){
+            System.out.println("ClientBean.logic");
+            //방법 1. ApplicationContext가 PrototypeBean을 조회해 새로운 인스턴스를 획득해 사용
+            PrototypeBean prototypeBean = applicationContext.getBean(PrototypeBean.class);
+            System.out.println("ApplicationContext에서 새롭게 생성해 조회한 prototypeBean = " + prototypeBean);
             prototypeBean.addCount();
             return prototypeBean.getCount();
         }
@@ -72,13 +101,13 @@ class SingletonWithPrototypeTest1 {
         
         @PostConstruct
         public void init(){
-            System.out.println("PrototypeBean.init" + this);
+            System.out.println("PrototypeBean.init\n" + this);
             System.out.println("count = " + count);
         }
 
         @PreDestroy
         public void destroy(){
-            System.out.println("PrototypeBean.destroy" + this);
+            System.out.println("PrototypeBean.destroy\n" + this);
         }
     }
 }
