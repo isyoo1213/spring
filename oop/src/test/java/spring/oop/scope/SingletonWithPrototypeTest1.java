@@ -66,6 +66,9 @@ class SingletonWithPrototypeTest1 {
         @Autowired
         ApplicationContext applicationContext;
 
+        // **** 만약 clientBean 외의 다른 클래스에서 생성된 singleton 인스턴스에서도 생성자 주입을 통해 PrototypeBean을 주입받는다면?
+        // -> 해당 PrototypeBean은 기존의 clientBean에 주입된 것과 다른 인스턴스로 새로 생성된 protytpeBean을 주입받음
+        // + 해당 클래스의 싱글톤 인스턴스에 의존관계가 주입된 채로 prototype의 인스턴스가 계속해서 존재함
 //        @Autowired
 //        public ClientBean(PrototypeBean prototypeBean){
 //            System.out.println("ClientBean 생성자 호출");
