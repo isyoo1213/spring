@@ -11,6 +11,7 @@ import org.springframework.context.annotation.Scope;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
+import javax.inject.Provider;
 
 import static org.assertj.core.api.Assertions.*;
 
@@ -79,6 +80,8 @@ class SingletonWithPrototypeTest1 {
         @Autowired//우선 간단히 필드 주입으로 사용 + 스프링이 자동으로 주입해주는 Bean
         private ObjectProvider<PrototypeBean> prototypeBeanObjectProvider;
 
+        @Autowired
+        private Provider<PrototypeBean> prototypeBeanProvider;
 //        @Autowired
 //        public ClientBean(PrototypeBean prototypeBean){
 //            System.out.println("ClientBean 생성자 호출");
@@ -95,8 +98,10 @@ class SingletonWithPrototypeTest1 {
             //방법 1. ApplicationContext가 PrototypeBean을 조회해 새로운 인스턴스를 획득해 사용
 //            PrototypeBean prototypeBean = applicationContext.getBean(PrototypeBean.class);
             //방법 2. ObjectProvider 사용
-            PrototypeBean prototypeBean = prototypeBeanObjectProvider.getObject();
-            System.out.println("ApplicationContext에서 새롭게 생성해 조회한 prototypeBean = " + prototypeBean);
+//            PrototypeBean prototypeBean = prototypeBeanObjectProvider.getObject();
+            //방법 3. Provider 사용
+            PrototypeBean prototypeBean = prototypeBeanProvider.get();
+//            System.out.println("ApplicationContext에서 새롭게 생성해 조회한 prototypeBean = " + prototypeBean);
             prototypeBean.addCount();
             return prototypeBean.getCount();
         }
