@@ -14,10 +14,12 @@ import spring.oop.common.MyLogger;
 public class LogDemoService {
 
 //    private final MyLogger myLogger;
-    private final ObjectProvider<MyLogger> myLoggerObjectProvider;
+//    private final ObjectProvider<MyLogger> myLoggerObjectProvider;
+
+    private final MyLogger myLogger;
 
     public void logic(String id) {
-        MyLogger myLogger = myLoggerObjectProvider.getObject();
+//        MyLogger myLogger = myLoggerObjectProvider.getObject();
         myLogger.log("service id = " + id);
     }
 }
