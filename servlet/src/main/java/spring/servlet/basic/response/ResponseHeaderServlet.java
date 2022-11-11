@@ -7,6 +7,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.io.PrintWriter;
 
 @WebServlet(name = "responseHeaderServlet", urlPatterns = "/response-header")
 public class ResponseHeaderServlet extends HttpServlet {
@@ -30,8 +31,10 @@ public class ResponseHeaderServlet extends HttpServlet {
         //[response redirect 편의 메서드]
         redirect(response);
 
-        response.getWriter().write("OK");
-
+        //[response body]
+//        response.getWriter().write("OK");
+        PrintWriter writer = response.getWriter();
+        writer.println("OK");
     }
 
     //[content 편의 메서드]
