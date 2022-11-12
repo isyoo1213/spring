@@ -24,6 +24,7 @@ public class RequestBodyJsonServlet extends HttpServlet {
         String messageBody = StreamUtils.copyToString(inputStream, StandardCharsets.UTF_8);
 
         System.out.println("messageBody = " + messageBody);
+        //HTML form data 또한 Body에 쿼리스트링을 실어서 보내므로 그 자체의 값을 읽어낼 수 있다
 
         JsonData jasonData = objectMapper.readValue(messageBody, JsonData.class);
         System.out.println("jasonData.getClass() = " + jasonData.getClass());
