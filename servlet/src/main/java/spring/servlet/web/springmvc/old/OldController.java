@@ -20,6 +20,14 @@ public class OldController implements Controller {
     @Override
     public ModelAndView handleRequest(HttpServletRequest request, HttpServletResponse response) throws Exception {
         System.out.println("OldController.handleRequest");
-        return null;
+        return new ModelAndView("new-form"); //논리적 이름만 반환하고, viewResolver에서 물리적 경로로 변환하도록
+
+        // *** 스프링부트는 InternalResourceViewResolver 라는 뷰 리졸버를 자동으로 등록한다
+        // + application.properties의 prefix, suffix 설정 정보를 사용
+
+        //ex)
+        //ViewResolver internalResourceViewResolver(){
+        //  return new InternalResourceViewResolver("/WEB-INF/", ".jsp");
+        //}
     }
 }
