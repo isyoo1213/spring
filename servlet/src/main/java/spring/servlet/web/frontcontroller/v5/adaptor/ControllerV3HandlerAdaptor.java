@@ -33,6 +33,7 @@ public class ControllerV3HandlerAdaptor implements MyHandlerAdaptor {
         return mv;
     }
 
+    // *** V3, V4 Adaptor 모두 paraMap을 받으므로, FrontControllerServletV5에서 공통처리 가능 - 리팩토링 요소
     // + ControllerV3는 Front-Controller에서 request 정보를 Map으로 변환 후 Controller으로 전달하는 방식이므로, V3의 Front-Controller처럼 변환
     private Map<String, String> createParamMap(HttpServletRequest request) {
         Map<String, String> paramMap = new HashMap<>();
