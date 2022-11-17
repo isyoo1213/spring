@@ -38,6 +38,7 @@ public class MappingController {
      * @PathVariable("userId") String userId -> @PathVariable userId
      */
     @GetMapping("/mapping/{userId}")
+    // *** PathVariable은 query parameter와는 다르게 Http Request message의 Body에 실려오지 않는다 ***
     public String mappingPath(@PathVariable("userId") String data) {
         log.info("mappingPath userId={}", data);
         return "ok";
@@ -100,6 +101,7 @@ public class MappingController {
         return "ok";
     }
 
+    // *** Request의 Header에서 지정한 Accept의 타입에 따라서 Response의 오류 또한 html이나 json등의 타입으로 응답
     /**
      * Accept 헤더 기반 Media Type
      * produces = "text/html"
