@@ -38,7 +38,7 @@ public class MappingController {
      * @PathVariable("userId") String userId -> @PathVariable userId
      */
     @GetMapping("/mapping/{userId}")
-    // *** PathVariable은 query parameter와는 다르게 Http Request message의 Body에 실려오지 않는다 ***
+    // *** PathVariable은 Html Form의 Post 메서드의 query parameter와는 다르게 Http Request message의 Body에 실려오지 않는다 ***
     public String mappingPath(@PathVariable("userId") String data) {
         log.info("mappingPath userId={}", data);
         return "ok";
