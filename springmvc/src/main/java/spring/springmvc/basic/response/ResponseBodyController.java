@@ -21,6 +21,7 @@ import java.io.IOException;
 @RestController//@Controller + @ResponseBody
 public class ResponseBodyController {
     // ***** Html이나 View Template을 반환하더라도 결국 Response Message Body에 해당 파일이나 정보가 담기는 것은 동일
+    // + ViewTemplate도 결국 Html을 생성해서 반환
 
     //HttpServletResponse + Writer의 기본적인 방법
     @GetMapping("response-body-string-v1")
