@@ -10,6 +10,7 @@ import spring.itemservice.domain.item.ItemRepository;
 
 import javax.annotation.PostConstruct;
 import java.util.List;
+import java.util.Map;
 
 @Controller
 @RequestMapping("/basic/items")
@@ -34,6 +35,13 @@ public class BasicItemController {
     public String item(@PathVariable Long itemId, Model model){
         Item findItem = itemRepository.findById(itemId);
         model.addAttribute("item", findItem);
+
+// model 싱글톤인지 검증용 코드
+//        Map<String, Object> modelMap =  model.asMap();
+//        modelMap.forEach((key, value) -> {
+//            System.out.println("key = " + key + ", value = " + value);
+//        });
+
         return "basic/item";
     }
 
@@ -43,8 +51,11 @@ public class BasicItemController {
         return "basic/addForm";
     }
 
+    /**
+     * AddItem V1
+     */
     //위의 상품등록 단순 Form html의 뷰 네임을 반환하는 GET 메서드와 URL주소는 같고, 요청 메서드만 다르게 구성
-    @PostMapping("/add")
+    //@PostMapping("/add")
     public String addItemV1(@RequestParam String itemName,
                        @RequestParam Integer price,
                        @RequestParam Integer quantity,
@@ -60,6 +71,27 @@ public class BasicItemController {
         //Item 조회에서 model에 추가한 "item"과 key값이 겹침
         //-> 조회시 model에 담기는 "item"과 상품등록시 model에 담기는 "item"은 어떻게 구별하는것일까?
         //-> request 단위로 model 인스턴스가 생성되는 것 vs Singleton으로 관리되는 것 vs Singleton이지만 request단위로 전달되는것
+
+        return "basic/item";
+    }
+
+    @PostMapping("/add")
+    public String addItemV2(@ModelAttribute("item") Item item, Model model){
+
+        //***** @ModelAttribute
+        ////스프링이 관리하는 Model 가져와서 알아서 사용 -> Model model을 Parameter로 넘길 필요 없음
+        //1. Model 객체 생성 + setMethod() 호출로 쿼리스트링으로 받아온 값 할당 by 프로퍼티 접근법 (form에서 넘어오는 이름을 사용)
+        //2. Model 사용시 다음 View에서 Model이 사용될 가능성이 큼 -> 설정한 String 값으로 model 객체에 addAttribute()로 저장
+        //Item Data 클래스에 맞는 인스턴스 생성 후 setMethod() 호출 + 쿼리 스트링 key에 맞는 변수에 값 할당
+
+        itemRepository.save(item);
+        //model.addAttribute("item", item); //@ModelAttribute에서 자동추가 -> 생략가능
+
+// model 싱글톤인지 검증용 코드
+//        Map<String, Object> modelMap =  model.asMap();
+//        modelMap.forEach((key, value) -> {
+//            System.out.println("key = " + key + ", value = " + value);
+//        });
 
         return "basic/item";
     }
