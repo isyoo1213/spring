@@ -75,7 +75,10 @@ public class BasicItemController {
         return "basic/item";
     }
 
-    @PostMapping("/add")
+    /**
+     * AddItem V2
+     */
+    //@PostMapping("/add")
     public String addItemV2(@ModelAttribute("item") Item item, Model model){
 
         //***** @ModelAttribute
@@ -92,6 +95,31 @@ public class BasicItemController {
 //        modelMap.forEach((key, value) -> {
 //            System.out.println("key = " + key + ", value = " + value);
 //        });
+
+        return "basic/item";
+    }
+
+    /**
+     * AddItem V3
+     */
+    //@PostMapping("/add")
+    public String addItemV3(@ModelAttribute Item item){//Model 파라미터 생략
+        //@ModelAttritube의 key 밸류 지정하지 않을 경우, Data 클래스 이름의 앞글자를 소문자로 바꾼 문자가 key 값이 된다
+        //@ModelAttritube가 생략된 것이므로, Data 클래스의 앞글자 소문자 문자열이 클래스 이름으로 model에 자동 등록
+
+        itemRepository.save(item);
+
+        return "basic/item";
+    }
+
+    /**
+     * AddItem V4
+     */
+    @PostMapping("/add")
+    public String addItemV4(Item item){
+        // *** String과 같은 단순타입 -> @RequestParam 적용!
+
+        itemRepository.save(item);
 
         return "basic/item";
     }
