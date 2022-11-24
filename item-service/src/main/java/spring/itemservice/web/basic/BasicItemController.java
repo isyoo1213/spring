@@ -105,7 +105,6 @@ public class BasicItemController {
     //@PostMapping("/add")
     public String addItemV3(@ModelAttribute Item item){//Model 파라미터 생략
         //@ModelAttritube의 key 밸류 지정하지 않을 경우, Data 클래스 이름의 앞글자를 소문자로 바꾼 문자가 key 값이 된다
-        //@ModelAttritube가 생략된 것이므로, Data 클래스의 앞글자 소문자 문자열이 클래스 이름으로 model에 자동 등록
 
         itemRepository.save(item);
 
@@ -118,10 +117,30 @@ public class BasicItemController {
     @PostMapping("/add")
     public String addItemV4(Item item){
         // *** String과 같은 단순타입 -> @RequestParam 적용!
+        //@ModelAttritube가 생략된 것이므로, Data 클래스의 앞글자 소문자 문자열이 클래스 이름으로 model에 자동 등록
 
         itemRepository.save(item);
 
         return "basic/item";
+    }
+
+    @GetMapping("/{itemId}/edit")
+    public String editForm(@PathVariable Long itemId, Model model){
+        Item item = itemRepository.findById(itemId);
+        model.addAttribute("item", item);
+        return "basic/editForm";
+    }
+
+    //*** HTML form은 이론적으로 'POST' 메서드만 가능
+    // + 필드에서 PUT, PATCH로 매핑은 가능하나, 실직적으론 POST 메서드로 작동함
+    @PostMapping("/{itemId}/edit")
+    public String editItem(@PathVariable Long itemId, @ModelAttribute Item item){
+        //@PathVariable과 @ModelAttribute가 동시에 쓰이므로 명확하게 표시해주는게 좋을 것 같음
+        itemRepository.update(itemId, item);
+
+        //Redirecting을 통해 url 경로 바꿔줄 예정
+        //{itemId} << 해당 변수는 Controller에 매핑된 @PathVariable에서 받아온 parameter를 자동으로 사용할 수 있게 해줌
+        return "redirect:/basic/items/{itemId}";
     }
 
     /**
