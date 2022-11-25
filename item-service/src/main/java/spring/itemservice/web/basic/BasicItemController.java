@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import spring.itemservice.domain.item.Item;
 import spring.itemservice.domain.item.ItemRepository;
 
@@ -114,7 +115,7 @@ public class BasicItemController {
     /**
      * AddItem V4
      */
-    @PostMapping("/add")
+    //@PostMapping("/add")
     public String addItemV4(Item item){
         // *** String과 같은 단순타입 -> @RequestParam 적용!
         //@ModelAttritube가 생략된 것이므로, Data 클래스의 앞글자 소문자 문자열이 클래스 이름으로 model에 자동 등록
@@ -122,6 +123,44 @@ public class BasicItemController {
         itemRepository.save(item);
 
         return "basic/item";
+    }
+
+    //******************** 현재 HTML form Request의 문제 *********************
+    //addItem() POST 메서드 호출 후, 브라우저를 새로고침할 경우 기존의 addItem() 요청이 다시 그대로 재전달됨
+    //즉, 새로고침은 마지막 웹의 Http Request를 재실행 -> POST url을 피하고, Redirect 사용으로 URL을 아예 바꿔준다
+    // Post -> Redirect -> Get의 PRG 방식
+
+    /**
+     * AddItem V5
+     */
+    //@PostMapping("/add")
+    public String addItemV5(Item item){
+
+        itemRepository.save(item);
+
+        return "redirect:/basic/items/" + item.getId();
+        //View가 아닌 절대경로 반환 -> PRG 방식
+        // /add로 요청시 -> 302응답 -> 응답 Header에 Redirect URL 포함 -> Redirect
+        // but, 현재 encoding이 안되어있으므로 한글, 공백이 들어갈 경우 문제가 생길 수 있음
+    }
+
+    /**
+     * AddItem V6
+     */
+    @PostMapping("/add")
+    public String addItemV6(Item item, RedirectAttributes redirectAttributes){
+
+        Item savedItem = itemRepository.save(item);
+
+        redirectAttributes.addAttribute("itemId", savedItem.getId());
+        //redirectAttributes 사용 시, encoding문제 해결 가능
+        redirectAttributes.addAttribute("status", true);
+        //정상적으로 저장되어있는지 확인하는 로직 추가(현재는 간단)
+        // + PathVariable로 사용되는 attribute 외의 나머지 attribute는 쿼리 파라미터 형식으로 추가되어 url에 반환
+        //ex) return "redirect:/basic/items/3?status=true";
+        //+ 이후 return되는 View에 쿼리 파라미터로 데이터가 넘어가므로 이를 활용한 후처리 가능
+
+        return "redirect:/basic/items/{itemId}";
     }
 
     @GetMapping("/{itemId}/edit")

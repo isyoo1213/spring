@@ -14,6 +14,10 @@
     <div class="py-5 text-center">
         <h2>상품 상세</h2>
     </div>
+
+    <!-- /add 에서 넘어온 redirectAttribute를 param으로 바로 꺼내어 사용 가능 + 로직-->
+    <h2 th:if="${param.status}" th:text="'저장 완료'">저장 여부</h2>
+
     <div>
         <label for="itemId">상품 ID</label>
         <input type="text" id="itemId" name="itemId" class="form-control"
