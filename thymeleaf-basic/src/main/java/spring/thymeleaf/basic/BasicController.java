@@ -1,11 +1,13 @@
 package spring.thymeleaf.basic;
 
 import lombok.Data;
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import javax.servlet.http.HttpSession;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -15,19 +17,19 @@ import java.util.Map;
 @RequestMapping("/basic")
 public class BasicController {
 
-    @GetMapping("text-basic")
+    @GetMapping("/text-basic")
     public String textBasic(Model model){
         model.addAttribute("data", "Hello <b>Spring</b>");
         return "basic/text-basic";
     }
 
-    @GetMapping("text-unescaped")
+    @GetMapping("/text-unescaped")
     public String textEscaped(Model model){
         model.addAttribute("data", "Hello <b>Spring</b>");
         return "basic/text-unescaped";
     }
 
-    @GetMapping("variable")
+    @GetMapping("/variable")
     public String variable(Model model){
         User userA = new User("userA", 20);
         User userB = new User("userB", 30);
@@ -49,8 +51,23 @@ public class BasicController {
         return "basic/variable";
     }
 
+    @GetMapping("/basic-objects")
+    public String basicObjects(HttpSession session){
+        //HttpServletRequest를 파라미터로 받아 model에 담아 넘기는 것도 있지만 이런 기본적인 기능은 바로 객체로 받을 수 있도록 제공
+        //요청 파라미터, session, Bean 또한 model에 담지 않고 바로 사용 가능 by 편의 객체 param, session, @beanName
+        session.setAttribute("sessionData", "Hello Session");
+        return "basic/basic-objects";
+    }
+
+    @Component("helloBean")
+    static class HelloBean{
+        public String hello(String data){
+            return "Hello" + data;
+        }
+    }
+
     @Data
-    static class User{
+    static class User {
         private String username;
         private int age;
 
