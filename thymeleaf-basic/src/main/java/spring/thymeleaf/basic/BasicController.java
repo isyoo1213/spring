@@ -118,6 +118,16 @@ public class BasicController {
         return "basic/block";
     }
 
+    @GetMapping("/javascript")
+    public String javascript(Model model){
+        //JS inline 사용하면 이스케이프 처리 + 내추럴 템플릿(주석처리 부분을 랜더링) 가능하게 해줌
+        // + 기존 JAVA의 toString()의 객체 정보를 객체 JSON으로 자동 변환
+        model.addAttribute("user", new User("userD", 10));
+        addUsers(model);
+
+        return "basic/javascript";
+    }
+
     private void addUsers(Model model) {
         List<User> userList = new ArrayList<>();
         userList.add(new User("userA", 10));
