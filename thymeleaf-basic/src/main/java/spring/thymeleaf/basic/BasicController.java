@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import javax.servlet.http.HttpSession;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -57,6 +58,12 @@ public class BasicController {
         //요청 파라미터, session, Bean 또한 model에 담지 않고 바로 사용 가능 by 편의 객체 param, session, @beanName
         session.setAttribute("sessionData", "Hello Session");
         return "basic/basic-objects";
+    }
+
+    @GetMapping("/date")
+    public String date(Model model){
+        model.addAttribute("localDateTime", LocalDateTime.now());
+        return "basic/date";
     }
 
     @Component("helloBean")
