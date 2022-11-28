@@ -18,6 +18,9 @@ class MessageSourceTest {
     @Autowired//필드 주입 - SpringBoot가 제공하는 DI를 제공받으므로 가능? 원래 고립된 순수한 단위테스트에서는 불가능
     MessageSource messageSource;
 
+    //기본적으로 스프링은 HttpRequest의 Accept 헤더에 따라 Locale을 설정하도록 설정됨 by localeResolver(인터페이스)
+    //-> 로케일 선택 방식을 바꾸고 싶다면 구현체를 변경해주면 됨 ex) 쿠키나 세션
+
     @Test
     void helloMessage(){
         //오류 발생시 - Settings - File Encodings - Properties files - UTF-8인코딩 설정
