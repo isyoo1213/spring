@@ -49,6 +49,14 @@ public class ValidationItemControllerV2 {
     //점진적으로 V1부터 바꿔갈 예정
     public String addItemV1(@ModelAttribute Item item, BindingResult bindingResult, RedirectAttributes redirectAttributes, Model model) {
         // *** BindingResult는 위치가 중요 - @ModelAttribute 뒤에 와야함 - 즉, 쿼리스트링이 매핑되는 객체에 에러를 바인딩함
+        // *** BindingResult 입장에서의 오류 2가지
+        // 1. 객체 바인딩 자체에서의 실패 오류
+        // 2. 비즈니스와 관련된 검증 로직에서의 오류
+
+        // *** BindingResult 인터페이스는 Errors 인터페이스를 상속받음
+        // 실제 구현체 - BeanPropertyBindingResult -> BindingResult와 Errors 둘 모두 구현
+        // -> BindingResult 대신 Errors 사용도 가능 but, addErrors()와 같은 몇몇 메서드가 누락되어있음
+        // *** Errors 인터페이스는 단순한 오류 저장과 조회 기능만 제공 -> 관례상 BindingResult를 많이 사용
 
         //검증 오류 결과를 보관 -> 이제 Error를 관리하는 방식이 달라짐
         //Map<String, String> errors = new HashMap<>();
