@@ -45,7 +45,7 @@ public class ValidationItemControllerV2 {
         return "validation/v2/addForm";
     }
 
-    @PostMapping("/add")
+    //@PostMapping("/add")
     //점진적으로 V1부터 바꿔갈 예정
     public String addItemV1(@ModelAttribute Item item, BindingResult bindingResult, RedirectAttributes redirectAttributes, Model model) {
         // *** BindingResult는 위치가 중요 - @ModelAttribute 뒤에 와야함 - 즉, 쿼리스트링이 매핑되는 객체에 에러를 바인딩함
@@ -102,6 +102,60 @@ public class ValidationItemControllerV2 {
 
             //이제 model에 errors를 담아서 View에 넘겨준 후 출력할 필요 없음 -> BindingResult는 자동으로 View로 오류를 넘김
             //model.addAttribute("errors", errors);
+            return "validation/v2/addForm";
+        }
+
+        //검증 성공 로직
+        Item savedItem = itemRepository.save(item);
+        redirectAttributes.addAttribute("itemId", savedItem.getId());
+        redirectAttributes.addAttribute("status", true);
+        return "redirect:/validation/v2/items/{itemId}";
+    }
+
+    //FieldError와 ObjectError의 구체적 내용
+    @PostMapping("/add")
+    public String addItemV2(@ModelAttribute Item item, BindingResult bindingResult, RedirectAttributes redirectAttributes, Model model) {
+
+        //검증 로직
+        if(!StringUtils.hasText(item.getItemName())){
+            // *** FieldError의 2번째 생성자의 추가적인 arguments들
+            //1. rejectedValue - 사용자가 입력한 binding에 실패한 값을 저장 -> 브라우저에서 사용자 입력값을 그대로 남겨둘 수 있음
+            //2. bindingFailure - Type오류와 같이 쿼리스트링의 객체 binding 자체에 실패했는지의 여부 (검증 로직에서의 실패가 아닌)
+            // ->  *** Type오류일 경우, 브라우저에서의 rejectedValue는 유지되지만
+            // 오류 조건에 따른 FieldError의 defaultMessage가 아닌 Exception 오류 메세지를 뱉는 새 인스턴스 생성 후 컨트롤러 호출
+            //3. codes, arguments
+
+            //FieldError는 사용자가 입력한 값을 들고 있는 이유
+            // - Request를 통한 요청 파라미터 가져오면 -> '컨트롤러에서 로직을 실행하기 전에, 즉 Item 객체 생성 전에'
+            // -> bindingResult 객체 생성해서 rejectedValue에 값을 보존 -> 이후에 컨트롤러 호출
+            // ex 타입에러일 경우) new FieldError("item", "itemName", "qqqq", true, null, null, "상품 이름은 필수입니다.")
+            // -> rejectedValue에 "qqq", bindingFailure에 true를 통해 기존의 검증 로직 에러와 다른 객체를 만듦
+
+            //Thymeleaf에서도 2번째 생성자 사용 + 오류 로직일 경우 th:field="*{필드명}"에서 rejecttedValue 값을 불러들이도록 설계 됨
+            bindingResult.addError(new FieldError("item", "itemName", item.getItemName(), false, null, null, "상품 이름은 필수입니다."));
+        }
+        if(item.getPrice() == null || item.getPrice() < 1000 || item.getPrice() > 1000000){
+            bindingResult.addError(new FieldError("item", "price", item.getPrice(), false, null, null, "가격은 1,000 ~ 1,000,000 까지 허용합니다."));
+        }
+        if(item.getQuantity() == null || item.getQuantity() <= 0|| item.getQuantity() > 9999){
+            bindingResult.addError(new FieldError("item", "quantity", item.getQuantity(), false, null, null, "수량은 1 ~ 9,9999까지 허용합니다."));
+        }
+
+        //특정 필드가 아닌 복합 룰 검증
+        if(item.getPrice() != null && item.getQuantity() != null){
+            int resultPrice = item.getPrice() * item.getQuantity();
+            if(resultPrice < 10000){
+                // *** ObjectError의 2번째 생성자의 추가적인 arguments들
+                //1. codes, arguments
+                bindingResult.addError(new ObjectError("item", null, null, "총 금액이 10,000원 이상이어야 합니다. 현재값 = " + resultPrice));
+            }
+        }
+
+        //검증에 실패하면 다시 입력 폼으로 이동
+        if(
+                bindingResult.hasErrors()
+        ){
+            log.info("errors ={}", bindingResult); //bindingResult 자체를 로그로 출력
             return "validation/v2/addForm";
         }
 
