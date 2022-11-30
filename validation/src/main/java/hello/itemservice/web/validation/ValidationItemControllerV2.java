@@ -217,6 +217,8 @@ public class ValidationItemControllerV2 {
     //-> errorCode.objectName.field 의 이름으로 기존의 codes처럼 구성하도록 설계됨 by *** MessageCodesResolver
     //-> *** 실제로는 낮은 우선순위의 범용성 매핑 (errorCode)과 높은 우선순위의 세밀한 매핑 (errorCode.objectName.field)이 모두 생성되어 적용
     // ex) new String[]{"range.item.price", "range"}
+    // *** 타입 에러의 경우, field가 typeMismatch로 치환된 errorCodes가 자동으로 생성되어 스프링이 제공하는 타입에러 메시지와 함께 + field 오류 메시지도 같이 불러온다
+    // ex) codes [typeMismatch.item.price,typeMismatch.price,typeMismatch.java.lang.Integer,typeMismatch] 를 자동 생성해서 가지고 있음
     @PostMapping("/add")
     public String addItemV4(@ModelAttribute Item item, BindingResult bindingResult, RedirectAttributes redirectAttributes, Model model) {
 
