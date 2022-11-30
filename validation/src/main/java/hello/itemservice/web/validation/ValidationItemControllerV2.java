@@ -170,8 +170,12 @@ public class ValidationItemControllerV2 {
     // 1. codes - String 배열으로 값을 넣어줘야함 - properties에서 해당 문자열을 순차적으로 찾아서 메세지 탐색
     // (못찾을경우 + defaultMessage없을 경우에는 서버오류발생)
     // 2. arguments - Object 배열로 값을 넘겨줘야함
-    @PostMapping("/add")
+    //@PostMapping("/add")
     public String addItemV3(@ModelAttribute Item item, BindingResult bindingResult, RedirectAttributes redirectAttributes, Model model) {
+
+        //BindingResult는 대상 객체 파라미터 뒤에 오기 때문에 이미 대상을 알고있다
+        log.info("objectName = {}", bindingResult.getObjectName());
+        log.info("targetName = {}", bindingResult.getTarget());
 
         //검증 로직
         if(!StringUtils.hasText(item.getItemName())){
@@ -189,6 +193,55 @@ public class ValidationItemControllerV2 {
             int resultPrice = item.getPrice() * item.getQuantity();
             if(resultPrice < 10000){
                 bindingResult.addError(new ObjectError("item", new String[]{"totalPriceMin"}, new Object[]{10000, resultPrice}, null));
+            }
+        }
+
+        //검증에 실패하면 다시 입력 폼으로 이동
+        if(
+                bindingResult.hasErrors()
+        ){
+            log.info("errors ={}", bindingResult); //bindingResult 자체를 로그로 출력
+            return "validation/v2/addForm";
+        }
+
+        //검증 성공 로직
+        Item savedItem = itemRepository.save(item);
+        redirectAttributes.addAttribute("itemId", savedItem.getId());
+        redirectAttributes.addAttribute("status", true);
+        return "redirect:/validation/v2/items/{itemId}";
+    }
+
+    //BindingResult의 rejectValue() 사용하기 ( ObjectError는 reject() ) - 결론적으로는 FieldError나 ObjectError를 생성하긴 함
+    //인자1 - 필드 이름
+    //인자2 - errorCode - 기존 FieldError()의 codes에서 error.properties에 정의된 모든 경로를 적어야 했지만, 패키지처럼 구성되게끔 앞부분만 작성
+    //-> errorCode.objectName.field 의 이름으로 기존의 codes처럼 구성하도록 설계됨 by MessageCodesResolver
+    @PostMapping("/add")
+    public String addItemV4(@ModelAttribute Item item, BindingResult bindingResult, RedirectAttributes redirectAttributes, Model model) {
+
+        //BindingResult는 대상 객체 파라미터 뒤에 오기 때문에 이미 대상을 알고있다
+        log.info("objectName = {}", bindingResult.getObjectName());
+        log.info("targetName = {}", bindingResult.getTarget());
+
+        //검증 로직
+        if(!StringUtils.hasText(item.getItemName())){
+            //bindingResult.addError(new FieldError("item", "itemName", item.getItemName(), false, new String[]{"required.item.itemName"}, null, null));
+            bindingResult.rejectValue("itemName", "required");
+        }
+        if(item.getPrice() == null || item.getPrice() < 1000 || item.getPrice() > 1000000){
+            //bindingResult.addError(new FieldError("item", "price", item.getPrice(), false, new String[]{"range.item.price"}, new Object[]{1000, 1000000}, null));
+            bindingResult.rejectValue("price", "range", new Object[]{1000, 1000000}, null);
+        }
+        if(item.getQuantity() == null || item.getQuantity() <= 0|| item.getQuantity() > 9999){
+            //bindingResult.addError(new FieldError("item", "quantity", item.getQuantity(), false, new String[]{"max.item.quantity"}, new Object[]{9999}, null));
+            bindingResult.rejectValue("quantity", "max", new Object[]{9999}, null);
+        }
+
+        //특정 필드가 아닌 복합 룰 검증
+        if(item.getPrice() != null && item.getQuantity() != null){
+            int resultPrice = item.getPrice() * item.getQuantity();
+            if(resultPrice < 10000){
+                //bindingResult.addError(new ObjectError("item", new String[]{"totalPriceMin"}, new Object[]{10000, resultPrice}, null));
+                bindingResult.reject("totalPriceMin", new Object[]{10000, resultPrice}, null);
             }
         }
 
