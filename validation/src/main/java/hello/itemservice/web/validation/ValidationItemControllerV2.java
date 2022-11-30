@@ -113,7 +113,7 @@ public class ValidationItemControllerV2 {
     }
 
     //FieldError와 ObjectError의 구체적 내용
-    @PostMapping("/add")
+    //@PostMapping("/add")
     public String addItemV2(@ModelAttribute Item item, BindingResult bindingResult, RedirectAttributes redirectAttributes, Model model) {
 
         //검증 로직
@@ -123,7 +123,7 @@ public class ValidationItemControllerV2 {
             //2. bindingFailure - Type오류와 같이 쿼리스트링의 객체 binding 자체에 실패했는지의 여부 (검증 로직에서의 실패가 아닌)
             // ->  *** Type오류일 경우, 브라우저에서의 rejectedValue는 유지되지만
             // 오류 조건에 따른 FieldError의 defaultMessage가 아닌 Exception 오류 메세지를 뱉는 새 인스턴스 생성 후 컨트롤러 호출
-            //3. codes, arguments
+            //3. codes, arguments - messageSource와 연동해 properties에서 값 가져오기
 
             //FieldError는 사용자가 입력한 값을 들고 있는 이유
             // - Request를 통한 요청 파라미터 가져오면 -> '컨트롤러에서 로직을 실행하기 전에, 즉 Item 객체 생성 전에'
@@ -148,6 +148,47 @@ public class ValidationItemControllerV2 {
                 // *** ObjectError의 2번째 생성자의 추가적인 arguments들
                 //1. codes, arguments
                 bindingResult.addError(new ObjectError("item", null, null, "총 금액이 10,000원 이상이어야 합니다. 현재값 = " + resultPrice));
+            }
+        }
+
+        //검증에 실패하면 다시 입력 폼으로 이동
+        if(
+                bindingResult.hasErrors()
+        ){
+            log.info("errors ={}", bindingResult); //bindingResult 자체를 로그로 출력
+            return "validation/v2/addForm";
+        }
+
+        //검증 성공 로직
+        Item savedItem = itemRepository.save(item);
+        redirectAttributes.addAttribute("itemId", savedItem.getId());
+        redirectAttributes.addAttribute("status", true);
+        return "redirect:/validation/v2/items/{itemId}";
+    }
+
+    // FieldErrors의 2번째 생성자의 arguments - codes, arguments 살펴보기
+    // 1. codes - String 배열으로 값을 넣어줘야함 - properties에서 해당 문자열을 순차적으로 찾아서 메세지 탐색
+    // (못찾을경우 + defaultMessage없을 경우에는 서버오류발생)
+    // 2. arguments - Object 배열로 값을 넘겨줘야함
+    @PostMapping("/add")
+    public String addItemV3(@ModelAttribute Item item, BindingResult bindingResult, RedirectAttributes redirectAttributes, Model model) {
+
+        //검증 로직
+        if(!StringUtils.hasText(item.getItemName())){
+            bindingResult.addError(new FieldError("item", "itemName", item.getItemName(), false, new String[]{"required.item.itemName"}, null, null));
+        }
+        if(item.getPrice() == null || item.getPrice() < 1000 || item.getPrice() > 1000000){
+            bindingResult.addError(new FieldError("item", "price", item.getPrice(), false, new String[]{"range.item.price"}, new Object[]{1000, 1000000}, null));
+        }
+        if(item.getQuantity() == null || item.getQuantity() <= 0|| item.getQuantity() > 9999){
+            bindingResult.addError(new FieldError("item", "quantity", item.getQuantity(), false, new String[]{"max.item.quantity"}, new Object[]{9999}, null));
+        }
+
+        //특정 필드가 아닌 복합 룰 검증
+        if(item.getPrice() != null && item.getQuantity() != null){
+            int resultPrice = item.getPrice() * item.getQuantity();
+            if(resultPrice < 10000){
+                bindingResult.addError(new ObjectError("item", new String[]{"totalPriceMin"}, new Object[]{10000, resultPrice}, null));
             }
         }
 
