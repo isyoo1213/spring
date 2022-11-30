@@ -214,7 +214,9 @@ public class ValidationItemControllerV2 {
     //BindingResult의 rejectValue() 사용하기 ( ObjectError는 reject() ) - 결론적으로는 FieldError나 ObjectError를 생성하긴 함
     //인자1 - 필드 이름
     //인자2 - errorCode - 기존 FieldError()의 codes에서 error.properties에 정의된 모든 경로를 적어야 했지만, 패키지처럼 구성되게끔 앞부분만 작성
-    //-> errorCode.objectName.field 의 이름으로 기존의 codes처럼 구성하도록 설계됨 by MessageCodesResolver
+    //-> errorCode.objectName.field 의 이름으로 기존의 codes처럼 구성하도록 설계됨 by *** MessageCodesResolver
+    //-> *** 실제로는 낮은 우선순위의 범용성 매핑 (errorCode)과 높은 우선순위의 세밀한 매핑 (errorCode.objectName.field)이 모두 생성되어 적용
+    // ex) new String[]{"range.item.price", "range"}
     @PostMapping("/add")
     public String addItemV4(@ModelAttribute Item item, BindingResult bindingResult, RedirectAttributes redirectAttributes, Model model) {
 
