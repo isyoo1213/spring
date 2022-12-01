@@ -24,6 +24,7 @@ import java.util.Map;
 public class ValidationItemControllerV2 {
 
     private final ItemRepository itemRepository;
+    private final ItemValidator itemValidator; //생성자 1개이므로 @AutoWired 삭제 가능 + final --> 생성자 주입
 
     @GetMapping
     public String items(Model model) {
@@ -219,7 +220,7 @@ public class ValidationItemControllerV2 {
     // ex) new String[]{"range.item.price", "range"}
     // *** 타입 에러의 경우, field가 typeMismatch로 치환된 errorCodes가 자동으로 생성되어 스프링이 제공하는 타입에러 메시지와 함께 + ** Null이 바인딩 되면서 field 오류 메시지도 같이 불러온다
     // ex) codes [typeMismatch.item.price,typeMismatch.price,typeMismatch.java.lang.Integer,typeMismatch] 를 자동 생성해서 가지고 있음
-    @PostMapping("/add")
+    //@PostMapping("/add")
     public String addItemV4(@ModelAttribute Item item, BindingResult bindingResult, RedirectAttributes redirectAttributes, Model model) {
 
         //타입 에러시 binding과정에 Null로 인한 field 오류 메시지를 지우는 로직
@@ -256,6 +257,62 @@ public class ValidationItemControllerV2 {
                 bindingResult.reject("totalPriceMin", new Object[]{10000, resultPrice}, null);
             }
         }
+
+        //검증에 실패하면 다시 입력 폼으로 이동
+        if(
+                bindingResult.hasErrors()
+        ){
+            log.info("errors ={}", bindingResult); //bindingResult 자체를 로그로 출력
+            return "validation/v2/addForm";
+        }
+
+        //검증 성공 로직
+        Item savedItem = itemRepository.save(item);
+        redirectAttributes.addAttribute("itemId", savedItem.getId());
+        redirectAttributes.addAttribute("status", true);
+        return "redirect:/validation/v2/items/{itemId}";
+    }
+
+    //Validator 사용하기
+    @PostMapping("/add")
+    public String addItemV5(@ModelAttribute Item item, BindingResult bindingResult, RedirectAttributes redirectAttributes, Model model) {
+
+//        if(bindingResult.hasErrors()){
+//            log.info("errors ={}", bindingResult);
+//            return "validation/v2/addForm";
+//        } //validate에 넘기는 @ModelAttribute Item item 파라미터는, 아직 Item 클래스로 캐스팅 되기 전의 인스턴스. 즉, target 형태
+
+        log.info("objectName = {}", bindingResult.getObjectName());
+        log.info("targetName = {}", bindingResult.getTarget());
+
+        // *** 현재 Validator 인터페이스를 구현하고 있지만 supports() 메서드를 사용하고 있지 않고, validate()만 사용
+        // -> Validator를 구현하지 않고 오버라이드 하지 않은 validate()메서드를 사용
+        // + Bean등록하지 않고 독립적인 클래스로 new 인스턴스화해서 사용할 수도 있음 (ItemValidator 클래스 또한 인터페이스, 오버라이드 제거해야함)
+        // ex) ItetmValidator itemValidator = new ItemValidator(item, bindingResult)
+        // but, 스프링이 대신 validate()자체를 호출시키기 위해 인터페이스 적용한 상태로 클래스 구성함
+
+        itemValidator.validate(item, bindingResult);
+
+/*
+        //검증 로직
+        if(!StringUtils.hasText(item.getItemName())){
+            bindingResult.rejectValue("itemName", "required");
+        }
+        if(item.getPrice() == null || item.getPrice() < 1000 || item.getPrice() > 1000000){
+            bindingResult.rejectValue("price", "range", new Object[]{1000, 1000000}, null);
+        }
+        if(item.getQuantity() == null || item.getQuantity() <= 0|| item.getQuantity() > 9999){
+            bindingResult.rejectValue("quantity", "max", new Object[]{9999}, null);
+        }
+
+        //특정 필드가 아닌 복합 룰 검증
+        if(item.getPrice() != null && item.getQuantity() != null){
+            int resultPrice = item.getPrice() * item.getQuantity();
+            if(resultPrice < 10000){
+                bindingResult.reject("totalPriceMin", new Object[]{10000, resultPrice}, null);
+            }
+        }
+*/
 
         //검증에 실패하면 다시 입력 폼으로 이동
         if(
