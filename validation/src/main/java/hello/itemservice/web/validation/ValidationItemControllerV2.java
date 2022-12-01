@@ -217,10 +217,18 @@ public class ValidationItemControllerV2 {
     //-> errorCode.objectName.field 의 이름으로 기존의 codes처럼 구성하도록 설계됨 by *** MessageCodesResolver
     //-> *** 실제로는 낮은 우선순위의 범용성 매핑 (errorCode)과 높은 우선순위의 세밀한 매핑 (errorCode.objectName.field)이 모두 생성되어 적용
     // ex) new String[]{"range.item.price", "range"}
-    // *** 타입 에러의 경우, field가 typeMismatch로 치환된 errorCodes가 자동으로 생성되어 스프링이 제공하는 타입에러 메시지와 함께 + field 오류 메시지도 같이 불러온다
+    // *** 타입 에러의 경우, field가 typeMismatch로 치환된 errorCodes가 자동으로 생성되어 스프링이 제공하는 타입에러 메시지와 함께 + ** Null이 바인딩 되면서 field 오류 메시지도 같이 불러온다
     // ex) codes [typeMismatch.item.price,typeMismatch.price,typeMismatch.java.lang.Integer,typeMismatch] 를 자동 생성해서 가지고 있음
     @PostMapping("/add")
     public String addItemV4(@ModelAttribute Item item, BindingResult bindingResult, RedirectAttributes redirectAttributes, Model model) {
+
+        //타입 에러시 binding과정에 Null로 인한 field 오류 메시지를 지우는 로직
+        // -> 검증 로직을 거치지 않고, bindingResult가 자동으로 생성하는 typeMismatch 오류를 바로 반환함
+        // *** 대신 검증 로직 전부 진행되지 않고 Type체크 오류만 진행함 - 아닐 경우 검증 로직에서 if 조건을 사용해야 함
+        if(bindingResult.hasErrors()){
+            log.info("errors ={}", bindingResult);
+            return "validation/v2/addForm";
+        }
 
         //BindingResult는 대상 객체 파라미터 뒤에 오기 때문에 이미 대상을 알고있다
         log.info("objectName = {}", bindingResult.getObjectName());
