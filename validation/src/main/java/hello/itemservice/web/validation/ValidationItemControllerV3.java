@@ -66,6 +66,15 @@ public class ValidationItemControllerV3 {
         log.info("objectName = {}", bindingResult.getObjectName());
         log.info("targetName = {}", bindingResult.getTarget());
 
+        //특정 필드가 아닌 복합 룰 검증
+        //객체 오류 검증은 @ScriptAssert보다 직접 이렇게 코드 짜는 것 + 메서드로 뽑는 방식이 더욱 바람직
+        if(item.getPrice() != null && item.getQuantity() != null){
+            int resultPrice = item.getPrice() * item.getQuantity();
+            if(resultPrice < 10000){
+                bindingResult.reject("totalPriceMin", new Object[]{10000, resultPrice}, null);
+            }
+        }
+
         //검증에 실패하면 다시 입력 폼으로 이동
         if(bindingResult.hasErrors()){
             log.info("errors ={}", bindingResult);
