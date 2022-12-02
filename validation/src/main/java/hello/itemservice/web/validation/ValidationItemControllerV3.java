@@ -41,11 +41,20 @@ public class ValidationItemControllerV3 {
         return "validation/v3/addForm";
     }
 
-    //@Validated를 통한 dataBinder 사용
     @PostMapping("/add")
     public String addItem(
-            @Validated //해당 어노테이션을 통해 Item ittem에 대한 validator가 자동으로 수행 -> 결과를 bindingResult에 담음
-            // + dataBinder에 등록된 validator가 여러개일 경우 -> validator의 supports() 메서드를 통해 선택 -> Validator 인터페이스를 쓰는 이유
+            @Validated
+            //현재 Item 필드에 Validator 관련 어노테이션이 적용됨
+            // -> 스프링부트가 라이브러리 확인 후 자동으로 Bean Validator를 인지하고 스프링에 통합해버림
+            // - 스프링 부트는 LocalValidatorFactoryBean를 글로벌 Validator로 등록
+            // -> Item 필드의 @NotNull과 같은 어노테이션 감지하고 검증 수행 -> 검증 결과는 bindingResult에 담음
+            // -> 이렇게 Global Validator가 적용되어있기 때문에 @Valid(자바표준), @Validated(스프링전용)만 적용하더라도 검증이 수행됨
+            // *** 만약 직접 Global Validator를 적용한다면(by WebMvcConfigurer 구현) Bean Validator를 기본 글로벌 검증기로 적용하지 않음
+            // -> 어노테이션 기반의 검증이 수행되지 않음
+
+            //*** 검증 순서
+            //1. @ModelAttribute의 각각 필드에 Type 변환 시도 -> 실패 시 typeMismatch로 FieldError 추가 -> *** Bean Validation 적용X
+            //2. Validator 적용 -> ***** Binding에 성공한 필드만 Bean Validation 적용
             @ModelAttribute Item item,
             BindingResult bindingResult,
             RedirectAttributes redirectAttributes,
@@ -54,11 +63,9 @@ public class ValidationItemControllerV3 {
         log.info("objectName = {}", bindingResult.getObjectName());
         log.info("targetName = {}", bindingResult.getTarget());
 
-        //itemValidator.validate(item, bindingResult);
-
         //검증에 실패하면 다시 입력 폼으로 이동
         if(bindingResult.hasErrors()){
-            log.info("errors ={}", bindingResult); //bindingResult 자체를 로그로 출력
+            log.info("errors ={}", bindingResult);
             return "validation/v3/addForm";
         }
 
