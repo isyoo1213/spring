@@ -55,6 +55,9 @@ public class ValidationItemControllerV3 {
             //*** 검증 순서
             //1. @ModelAttribute의 각각 필드에 Type 변환 시도 -> 실패 시 typeMismatch로 FieldError 추가 -> *** Bean Validation 적용X
             //2. Validator 적용 -> ***** Binding에 성공한 필드만 Bean Validation 적용
+
+            //*** 검증 원리
+            //@NotNull 과 같이 설정된 어노테이션 이름을 기반으로 errorCode를 만듦( ex) NotNull.item.itemName )
             @ModelAttribute Item item,
             BindingResult bindingResult,
             RedirectAttributes redirectAttributes,
