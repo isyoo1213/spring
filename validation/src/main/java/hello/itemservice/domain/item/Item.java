@@ -17,17 +17,20 @@ import javax.validation.constraints.NotNull;
 // errorCode ScriptAssert.item 등을 사용할 수도 있긴 함
 public class Item {
 
+    @NotNull(groups = UpdateCheck.class)
     private Long id;
 
-    @NotBlank(message = "공백X") //이 오류 메시지 출력은 javax, 즉 Spring을 사용하지 않은 상태로 사용 가능
+    @NotBlank(groups = {SaveCheck.class, UpdateCheck.class},
+            message = "공백X") //이 오류 메시지 출력은 javax, 즉 Spring을 사용하지 않은 상태로 사용 가능
     private String itemName;
 
-    @NotNull
-    @Range(min = 1000, max = 1000000)
+    @NotNull(groups = {SaveCheck.class, UpdateCheck.class})
+    @Range(groups = {SaveCheck.class, UpdateCheck.class},
+            min = 1000, max = 1000000)
     private Integer price;
 
-    @NotNull
-    @Max(9999)
+    @NotNull(groups = {SaveCheck.class, UpdateCheck.class})
+    @Max(value = 9999, groups = SaveCheck.class)
     private Integer quantity;
 
     public Item() {
