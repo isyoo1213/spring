@@ -2,6 +2,7 @@ package hello.login.web.login;
 
 import hello.login.domain.login.LoginService;
 import hello.login.domain.member.Member;
+import hello.login.web.session.SessionManager;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
@@ -12,6 +13,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 
 import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 @Slf4j
@@ -20,13 +22,14 @@ import javax.servlet.http.HttpServletResponse;
 public class LoginController {
 
     private final LoginService loginService;
+    private final SessionManager sessionManager;
 
     @GetMapping("/login")
     public String loginForm(@ModelAttribute("loginForm") LoginForm form) {
         return "login/loginForm";
     }
 
-    @PostMapping("/login")
+    //@PostMapping("/login")
     public String login(
             @Validated
             @ModelAttribute("loginForm") LoginForm form,
@@ -59,10 +62,61 @@ public class LoginController {
         return "redirect:/";
     }
 
-    @PostMapping("/logout")
+    //SessionManager를 통해 Session을 생성 + 회원 데이터 보관
+    @PostMapping("/login")
+    public String loginV2(
+            @Validated
+            @ModelAttribute("loginForm") LoginForm form,
+            BindingResult bindingResult,
+            HttpServletResponse response) {
+        if (bindingResult.hasErrors()) {
+            return "login/loginForm";
+        }
+
+        Member loginMember = loginService.login(form.getLoginId(), form.getPassword());
+
+        if (loginMember == null) {
+            bindingResult.reject("loginFail", "아이디 또는 비밀번호가 맞지 않습니다.");
+            return "login/loginForm";
+        }
+
+        //로그인 성공 처리 TODO - Cookie를 만들어서 저장
+
+/*
+        //Cookie 생성
+        Cookie idCookie = new Cookie("memberId", String.valueOf(loginMember.getId()));
+
+        //생성한 Cookie를 Response에 실어 보내는 작업 - HttpServletResponse 사용
+        response.addCookie(idCookie);
+*/
+        /**
+         * SessionManager를 통해 Session을 생성 + 회원 데이터 보관
+         */
+        //1. createSession() -> SessionId 생성 + 값을 Session에 저장 + Cookie 생성 + Response에 담기
+        sessionManager.createSession(loginMember, response);
+
+        return "redirect:/";
+    }
+
+    //@PostMapping("/logout")
     public String logout(HttpServletResponse response){
-        //Age가 0인 Cookie를 같은 이름으로 바꿔 만료시키는 방식
         expireCookie(response, "memberId");
+
+        return "redirect:/";
+    }
+
+    //SessionManager를 통한 Cookie Expire
+    @PostMapping("/logout")
+    public String logoutV2(
+            //HttpServletResponse response // 기존에는 응답을 통해 다음 요청에 사용될 Cookie를 아예 만료시킴
+            HttpServletRequest request // 이제는 기존 요청의 Cookie를 만료시키는 것이 아닌 SessionStore 내의 데이터를 삭제
+    ){
+        //expireCookie(response, "memberId");
+
+        /**
+         * SessionManager를 통해 expire() 호출
+         */
+        sessionManager.expire(request);
 
         return "redirect:/";
     }
