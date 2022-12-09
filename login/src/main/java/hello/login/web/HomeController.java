@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.GetMapping;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 
 @Slf4j
 @Controller
@@ -50,7 +51,7 @@ public class HomeController {
         return "loginHome";
     }
 
-    @GetMapping("/")
+    //@GetMapping("/")
     public String homeLoginV2(
             //@CookieValue(name = "memberId", required = false) Long memberId, //스프링이 Type Converting해줌
             // -> 이제 Only Cookie를 통해 로그인 정보를 파악하는 것이 아닌, SessionStore에 저장된 Member 정보 데이터를 확인
@@ -86,6 +87,26 @@ public class HomeController {
         }
 
         model.addAttribute("member", member);
+        return "loginHome";
+    }
+
+    @GetMapping("/")
+    public String homeLoginV3(HttpServletRequest request, Model model){
+
+        HttpSession session = request.getSession(false);
+        //로그인하지 않은 사용자의 요청에 Session을 생성하지 않도록 false 세팅
+
+        //Session에 사용자 데이터가 없으면 login되지 않은 home으로 이동
+        if(session == null){
+            return "home";
+        }
+
+        //Session에 저장된 사용자 정보 획득
+        //getAttribute()의 return Type은 Object -> Type Casting
+        Member loginMember = (Member)session.getAttribute(SessionConst.LOGIN_MEMBER);
+
+        //Session이 유지되면 Login된 home 화면으로 이동
+        model.addAttribute("member", loginMember);
         return "loginHome";
     }
 }
