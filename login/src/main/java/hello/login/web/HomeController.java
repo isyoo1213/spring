@@ -9,6 +9,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.SessionAttribute;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -90,7 +91,7 @@ public class HomeController {
         return "loginHome";
     }
 
-    @GetMapping("/")
+    //@GetMapping("/")
     public String homeLoginV3(HttpServletRequest request, Model model){
 
         HttpSession session = request.getSession(false);
@@ -104,6 +105,36 @@ public class HomeController {
         //Session에 저장된 사용자 정보 획득
         //getAttribute()의 return Type은 Object -> Type Casting
         Member loginMember = (Member)session.getAttribute(SessionConst.LOGIN_MEMBER);
+
+        //Session이 유지되면 Login된 home 화면으로 이동
+        model.addAttribute("member", loginMember);
+        return "loginHome";
+    }
+
+    //@SessionAttribute 사용
+    @GetMapping("/")
+    public String homeLoginV3Spring(
+            //HttpServletRequest request,
+            @SessionAttribute(name = SessionConst.LOGIN_MEMBER, required = false) Member loginMember,
+            //Request에서 Session 획득 + getAttribute()를 통해 저장된 정보 획득
+            //*** Session을 생성하는 것은 아닌, Login정보를 Session으로부터 획득하기만 함
+            Model model){
+
+        // *** 의문점
+        //Spring의 Session 사용 시 JSESSIONID가 Cookie로 전달되는 과정
+        //- 기존에는 Cookie를 통해 데이터가 저장된 sessionStrogae의 key에 바로 접근
+        //- but 스프링의 세션 사용하면 Cookie로 전달되는 JSESSIONID와, setAttribute()를 통해 데이터를 저장하는 key가 다름
+        //- 이 중간 과정에서의 스프링의 처리 원리
+
+        //HttpSession session = request.getSession(false);
+
+        //Session에 사용자 데이터가 없으면 login되지 않은 home으로 이동
+        if(loginMember == null){
+            return "home";
+        }
+
+        //Session에 저장된 사용자 정보 획득
+        //Member loginMember = (Member)session.getAttribute(SessionConst.LOGIN_MEMBER);
 
         //Session이 유지되면 Login된 home 화면으로 이동
         model.addAttribute("member", loginMember);
