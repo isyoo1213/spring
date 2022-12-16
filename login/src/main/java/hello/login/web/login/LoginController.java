@@ -12,6 +12,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
@@ -101,7 +102,7 @@ public class LoginController {
     }
 
     //Spring이 제공하는 HttpSession 사용하기
-    @PostMapping("/login")
+    //@PostMapping("/login")
     public String loginV3(
             @Validated
             @ModelAttribute("loginForm") LoginForm form,
@@ -134,6 +135,37 @@ public class LoginController {
         // -> 덮어쓰기 되거나, 후입선출되는 자료구조일 가능성 높음 -> 서버 오류 생김
 
         return "redirect:/";
+    }
+
+    //Filter 적용 후, Login 인증 후에 Request Param으로 넘어오는 Redirect URL을 사용하는 로직 추가
+    @PostMapping("/login")
+    public String loginV4(
+            @Validated
+            @ModelAttribute("loginForm") LoginForm form,
+            @RequestParam(defaultValue = "/") String redirectURL,
+            BindingResult bindingResult,
+            HttpServletRequest request) {
+
+        if (bindingResult.hasErrors()) {
+            return "login/loginForm";
+        }
+
+        Member loginMember = loginService.login(form.getLoginId(), form.getPassword());
+
+        if (loginMember == null) {
+            bindingResult.reject("loginFail", "아이디 또는 비밀번호가 맞지 않습니다.");
+            return "login/loginForm";
+        }
+
+        //로그인 성공 처리 TODO - Cookie를 만들어서 저장
+
+        //Session이 있으면 해당 Session을 반환하고, 없으면 신규 Session을 생성해서 반환
+        HttpSession session = request.getSession();
+
+        //Session에 로그인 회원 정보 보관
+        session.setAttribute(SessionConst.LOGIN_MEMBER, loginMember);
+
+        return "redirect:" + redirectURL;
     }
 
     //@PostMapping("/logout")

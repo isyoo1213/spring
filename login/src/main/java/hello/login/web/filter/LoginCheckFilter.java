@@ -44,7 +44,7 @@ public class LoginCheckFilter implements Filter {
                     log.info("미인증 사용자 요청 {}", requestURI);
 
                     //로그인으로 redirect
-                    // *** + redirect된 로그인 페이지에서 인증 성공시 기존에 접속하려했던 URI로 보내주는 처리
+                    // *** + redirect된 로그인 페이지에서 인증 성공시 기존에 접속하려했던 URI로 보내주는 처리 by @RequestParam 형식
                     httpResponse.sendRedirect("/login?redirectURL=" + requestURI);
                     return; //*** 단순히 return을 해줌으로써 filter나 servlet등 다음 chain 실행 종료
                 }
