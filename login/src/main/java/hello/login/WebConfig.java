@@ -2,19 +2,31 @@ package hello.login;
 
 import hello.login.web.filter.LogFilter;
 import hello.login.web.filter.LoginCheckFilter;
+import hello.login.web.interceptor.LoginInterceptor;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import javax.servlet.Filter;
 
 //SpringBoot에서 Filter 등록하기
 @Configuration
-public class WebConfig {
+public class WebConfig implements WebMvcConfigurer {
+
+    //Override로 인터셉터를 추가하는 것은 그냥 스프링이 제공하는 방식이므로 사용
+    @Override
+    public void addInterceptors(InterceptorRegistry registry) {
+        registry.addInterceptor(new LoginInterceptor())
+                .order(1)
+                .addPathPatterns("/**") //Servlet Filter와 다른 구성
+                .excludePathPatterns("/css/**", "/*.ico", "/error"); //인터셉터를 적용하지 않을 Path
+    }
 
     //SpringBoot는 WAS를 직접 들고 띄우기 때문에, WAS를 띄울 때 servletContainer에 Filter를 같이 구성해줌
     //filter를 관리해주는 클래스를 Bean등록
-    @Bean
+    //@Bean
     public FilterRegistrationBean logFilter(){
         FilterRegistrationBean<Filter> filterRegistrationBean = new FilterRegistrationBean<>();
 
