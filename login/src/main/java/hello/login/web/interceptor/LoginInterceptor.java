@@ -27,7 +27,8 @@ public class LoginInterceptor implements HandlerInterceptor {
         if(handler instanceof HandlerMethod){
             // *** MVC 복습하기
             // @RequestMapping 어노테이션으로 처리되는 handler
-            // handler는 범용성을 위해 Object로 받고있지만, 는 adaptor를 적용하기 전 HandlerMethod 형을 사용함
+            //*** 일반적으로 HandlerMapping으로 @Controller나 @RequestMapping을 사용 -> 핸들러 정보로 HandlerMethod가 넘어옴
+            // handler는 범용성을 위해 Object로 받고있지만, 다운캐스팅을 통해 HandlerMethod 형을 사용함
 
             HandlerMethod hm = (HandlerMethod) handler; //호출할 컨트롤러 메서드의 모든 정보가 포함되어있음
 
