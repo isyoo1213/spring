@@ -2,6 +2,7 @@ package hello.login;
 
 import hello.login.web.filter.LogFilter;
 import hello.login.web.filter.LoginCheckFilter;
+import hello.login.web.interceptor.LoginCheckInterceptor;
 import hello.login.web.interceptor.LoginInterceptor;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
@@ -22,6 +23,11 @@ public class WebConfig implements WebMvcConfigurer {
                 .order(1)
                 .addPathPatterns("/**") //Servlet Filter와 다른 구성
                 .excludePathPatterns("/css/**", "/*.ico", "/error"); //인터셉터를 적용하지 않을 Path
+
+        registry.addInterceptor(new LoginCheckInterceptor())
+                .order(2)
+                .addPathPatterns("/**")
+                .excludePathPatterns("/", "/members/add", "/login", "/logout", "/css/**", "/*.ico", "/error");
     }
 
     //SpringBoot는 WAS를 직접 들고 띄우기 때문에, WAS를 띄울 때 servletContainer에 Filter를 같이 구성해줌
@@ -43,7 +49,7 @@ public class WebConfig implements WebMvcConfigurer {
     }
 
     //*** Filter 호출이 메모리 리소스에 주는 부담은 매우 적다 - 성능 저하 걱정 크게 필요 없음
-    @Bean
+    //@Bean
     public FilterRegistrationBean loginCheckFilter(){
         FilterRegistrationBean<Filter> filterRegistrationBean = new FilterRegistrationBean<>();
 
