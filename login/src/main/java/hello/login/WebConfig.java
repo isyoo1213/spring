@@ -1,5 +1,6 @@
 package hello.login;
 
+import hello.login.web.argumentResolver.LoginMemberArgumentResolver;
 import hello.login.web.filter.LogFilter;
 import hello.login.web.filter.LoginCheckFilter;
 import hello.login.web.interceptor.LoginCheckInterceptor;
@@ -7,14 +8,22 @@ import hello.login.web.interceptor.LoginInterceptor;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import javax.servlet.Filter;
+import java.util.List;
 
 //SpringBoot에서 Filter 등록하기
 @Configuration
 public class WebConfig implements WebMvcConfigurer {
+
+    //ArgumentResolver등록은 override로 간단
+    @Override
+    public void addArgumentResolvers(List<HandlerMethodArgumentResolver> resolvers) {
+        resolvers.add(new LoginMemberArgumentResolver());
+    }
 
     //Override로 인터셉터를 추가하는 것은 그냥 스프링이 제공하는 방식이므로 사용
     @Override

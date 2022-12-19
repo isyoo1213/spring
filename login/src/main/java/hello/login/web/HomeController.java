@@ -2,6 +2,7 @@ package hello.login.web;
 
 import hello.login.domain.member.Member;
 import hello.login.domain.member.MemberRepository;
+import hello.login.web.argumentResolver.Login;
 import hello.login.web.session.SessionManager;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -112,7 +113,7 @@ public class HomeController {
     }
 
     //@SessionAttribute 사용
-    @GetMapping("/")
+    //@GetMapping("/")
     public String homeLoginV3Spring(
             //HttpServletRequest request,
             @SessionAttribute(name = SessionConst.LOGIN_MEMBER, required = false) Member loginMember,
@@ -137,6 +138,24 @@ public class HomeController {
         //Member loginMember = (Member)session.getAttribute(SessionConst.LOGIN_MEMBER);
 
         //Session이 유지되면 Login된 home 화면으로 이동
+        model.addAttribute("member", loginMember);
+        return "loginHome";
+    }
+
+    //ArgumentResolver 사용 - Argument를 어떻게 처리할지에 관한 Resolver
+    // *** MVC의 Reuqest Mapping 부분 복습
+    @GetMapping("/")
+    public String homeLoginV3ArgumentResolver(
+            //@SessionAttribute(name = SessionConst.LOGIN_MEMBER, required = false) Member loginMember,
+            @Login Member loginMember, //Session에서 login된 유저를 찾아 반환하는 과정을 어노테이션 하나로 처리
+            //@Login 어노테이션에 아무 로직처리를 하지 않으면 ModelAttribute처럼 동작 -> 리졸버가 동작하도록 로직 구성
+
+            Model model){
+
+        if(loginMember == null){
+            return "home";
+        }
+
         model.addAttribute("member", loginMember);
         return "loginHome";
     }
