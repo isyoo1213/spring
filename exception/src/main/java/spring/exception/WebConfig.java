@@ -27,7 +27,7 @@ public class WebConfig implements WebMvcConfigurer {
         // + *** 정상적인 내부적인 요청이므로 postHandle도 호출됨
     }
 
-    @Bean
+    //@Bean
     public FilterRegistrationBean logFilter(){
         FilterRegistrationBean<Filter> filterRegistrationBean = new FilterRegistrationBean<>();
         filterRegistrationBean.setFilter(new LogFilter());

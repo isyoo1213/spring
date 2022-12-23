@@ -25,6 +25,11 @@ public class ServletExceptionController {
         // -> 옵션을 통해 설정 가능 - 뒤에서 다룰 예정
     }
 
+    @GetMapping("/error-400")
+    public void error400(HttpServletResponse response) throws IOException {
+        response.sendError(400, "400 오류");
+    }
+
     @GetMapping("/error-500")
     public void error500(HttpServletResponse response) throws IOException {
         response.sendError(500);
