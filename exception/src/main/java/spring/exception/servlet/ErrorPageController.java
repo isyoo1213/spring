@@ -83,6 +83,7 @@ public class ErrorPageController {
         log.info("dispatchType = {}", request.getDispatcherType());
 
         // *** 현재 코드 실행 시 printErrorInfo() 정보 제대로 출력되지 않는 부분 추후 확인하기
+        // -> javax에서 jakarta로 변경 후 정상구동 확인
     }
 
 }
