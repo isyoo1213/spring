@@ -19,6 +19,14 @@ public class ApiExceptionController {
             // -> ErrorPageController도 JSON 응답을 할 수 있도록 구성해주어야 함
         }
 
+        // * 스프링부트의 BasicErrorController를 활용한 JSON응답의 기본 오류 처리
+        // -> WAS, ServletContrainer 입장에서는 내부적인 오류 발생으로 500 에러로 인식
+        // -> * but, 사용자의 입력으로 인한 오류 -> 그렇다면 이것을 변경하고 싶다면?
+        // -> HandlerExceptionResolver 사용 - 컨트롤러 밖으로 던져진 예외를 해결하고 동작을 정의할 수 있음
+        if (id.equals("bad")) {
+            throw new IllegalArgumentException("잘못 입력된 값입니다.");
+        }
+
         return new MemberDTO(id, "hello " + id);
     }
 

@@ -8,7 +8,7 @@ import org.springframework.stereotype.Component;
 
 //WebServer, 즉 우리가 사용하고있는 Tomcat의 커스터마이징을 가능하게 해줌
 //서버가 뜰 때 Tomcat에 해당 ErrorPage에 대한 정보 등록해줌
-@Component //Bean으로 등록해주기
+//@Component //Bean으로 등록해주기
 public class WebServerCustomizer implements WebServerFactoryCustomizer<ConfigurableWebServerFactory> {
 
     //**** BTB - 일반적으로 Web에서 WAS가 예외를 전달받는 경우 2가지
