@@ -6,6 +6,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
+import spring.exception.exception.UserException;
 
 @Slf4j
 @RestController //API형식이므로 Controller에서 return시 Body에 직접 Data를 반환할 수 있도록 RestController 사용
@@ -25,6 +26,13 @@ public class ApiExceptionController {
         // -> HandlerExceptionResolver 사용 - 컨트롤러 밖으로 던져진 예외를 해결하고 동작을 정의할 수 있음
         if (id.equals("bad")) {
             throw new IllegalArgumentException("잘못 입력된 값입니다.");
+        }
+
+        // * 직접 만든 Exception 사용하기
+        if (id.equals("user-ex")) {
+            throw new UserException("사용자 오류입니다.");
+            // 다른 처리 안해주면 500 Error by BasicErrorController
+            // 정상 응답이 아니므로 resolver, Interceptor 외에 BasicErrorController호출 후 dispatcherServlet에서 오류도 발생
         }
 
         return new MemberDTO(id, "hello " + id);
