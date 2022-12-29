@@ -6,6 +6,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 import spring.exception.exception.BadRequestException;
@@ -47,7 +48,7 @@ public class ApiExceptionController {
         throw new BadRequestException();
     }
 
-    //ResponseStatusException 예외 + ** ResponseStatusExceptionResolver 사용하기
+    // * ResponseStatusException 예외 + ** ResponseStatusExceptionResolver 사용하기
     //-> @ResponseStatus는 어노테이션이므로 조건에 따른 동적인 로직 구성이나 이미 정의되어 변경하기 어려운 예외에는 사욯에 제한
     //-> 사용자가 만든 예외에 적합함 -> 그렇지 않은 경우에는 ResponseStatusException 예외를 사용 - 부모가 RuntimeException 상속
     // * 상태코드 지정, 에러 메시지, 지정해줄 상태코드
@@ -55,6 +56,16 @@ public class ApiExceptionController {
     public String responseStatusEx2(){
         throw new ResponseStatusException(HttpStatus.NOT_FOUND, "error.bad", new IllegalArgumentException());
         //NOT_FOUND는 404 에러 + 3번 째 argument는 실제 Exception
+    }
+
+    // * DefaultHandlerExceptionResolver 사용하기 - 스프링 내부의 오류를 500이 아닌 다른 오류로 처리해주는 기능
+    // -> 살펴보면 여러 Exception에 대한 doResolve()메서드가 정의됨 + 내부적 오류를 최대한 http 스펙에 맞는 상태코드로 반환해줌
+    @GetMapping("/api/default-handler-ex")
+    public String defaultException(@RequestParam Integer data) {
+        //다른 처리해주지 않을 경우, Binding 에러 발생 시 400Error BadRequest 발생
+        //Exception 종류 - exception": "org.springframework.web.method.annotation.MethodArgumentTypeMismatchException"
+        // -> DefaultHandlerExceptionResolver에서 *** TypeMismatchException 인스턴스 확인 후 처리
+        return "ok";
     }
 
     @Data
