@@ -13,6 +13,8 @@ import spring.exception.exception.UserException;
 @RestController
 public class ApiExceptionV2Controller {
 
+/* // exHandler.advice의 ExControllerAdvice로 분리 -> 이제 이 Controller에서는 Exception 처리에 관한 메서드가 없음
+
     //다른 처리없이 Exception 발생하는 요청시, BasicErrorController에서 자동으로 만든 오류페이지가 sendError()로 Body로 반환됨
     // -> @ExceptionHandler사용 -> Exception 종류에 따른 resolver내의 handler를 간단하게 구성할 수 있도록 해주는 어노테이션
 
@@ -52,6 +54,7 @@ public class ApiExceptionV2Controller {
         return new ErrorResult("EX", "내부 오류");
     }
 
+*/
     @GetMapping("/api2/members/{id}")
     public MemberDTO getMember(@PathVariable("id") String id) {
 
