@@ -30,6 +30,7 @@ public class HelloController {
         // *** StringToIntegerConverter를 등록하지 않아도 정상적으로 작동함
         // -> 스프링이 내부적으로 제공하는 수많은 기본 컨버터들이 작동 -> *** 추가한 컨버터가 우선권을 가짐
 
+        // * Formatter 적용 후 - http://localhost:8080/hello-v2?data=1,000 -> data = 1000 콘솔 출력
         return "ok";
     }
 
