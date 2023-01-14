@@ -3,6 +3,7 @@ package spring.upload.controller;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.io.Resource;
+import org.springframework.core.io.UrlResource;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -14,6 +15,7 @@ import spring.upload.domain.UploadFile;
 import spring.upload.file.FileStore;
 
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.util.List;
 
 @Slf4j
@@ -58,6 +60,12 @@ public class ItemController {
         model.addAttribute("item", item);
 
         return "item-view";
+    }
+
+    @ResponseBody
+    @GetMapping("/images/{filename}")
+    public Resource downloadImage(@PathVariable String filename) throws MalformedURLException {
+       return new UrlResource("file: " + fileStore.getFullPath(filename));
     }
 
 }
